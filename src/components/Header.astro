@@ -63,7 +63,8 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
             <ul class="dropdown-menu" role="menu">
               {item.children.map(child => (
                 <li role="none">
-                  <a class="dropdown-link nav-split-link" href={child.href} role="menuitem" data-submenu={child.children ? '' : undefined}>
+                  <a class="dropdown-link" href={child.href} role="menuitem"
+                     data-submenu-text={child.splitArrow ? '' : undefined}>
                     {child.label}
                     {child.splitArrow && (
                       <button class="dropdown-submenu-arrow" type="button" aria-label="Toggle Featured Experiments" data-submenu-arrow>
@@ -343,8 +344,12 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
       display: flex;
     }
 
-    /* Desktop: split link text has no pointer cursor */
-    .nav-split-link {
+    /* Desktop: split link text has no pointer cursor; flex row with space-between for right-aligned arrow */
+    .dropdown-link[data-submenu-text] {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-2) var(--space-4);
       cursor: default;
     }
 
@@ -385,10 +390,13 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
     }
 
     /* Mobile: split link is a flex row — text navigates, arrow toggles */
-    .nav-split-link {
+    .dropdown-link {
+      cursor: pointer;
+    }
+
+    .dropdown-link[data-submenu-text] {
       display: flex;
       align-items: center;
-      cursor: default;
       gap: var(--space-2);
       padding: var(--space-3) var(--space-4);
     }
@@ -434,7 +442,9 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
 <script>
   const toggle = document.querySelector('.header-toggle');
   const nav = document.querySelector('.header-nav');
+  const isMobile = () => window.matchMedia('(max-width: 767px)').matches;
 
+  // Hamburger toggle
   toggle?.addEventListener('click', () => {
     const isOpen = nav?.classList.toggle('open');
     toggle.setAttribute('aria-expanded', String(isOpen));
@@ -444,123 +454,65 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
   document.querySelectorAll('.dropdown-toggle[data-dropdown]').forEach(toggleBtn => {
     toggleBtn.addEventListener('click', () => {
       const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
-
-      // Close all other dropdowns immediately
       document.querySelectorAll('.dropdown-toggle[data-dropdown]').forEach(other => {
         if (other !== toggleBtn) {
           other.setAttribute('aria-expanded', 'false');
         }
       });
-
-      // Toggle current
       toggleBtn.setAttribute('aria-expanded', String(!isExpanded));
     });
   });
 
-  // Mobile: split tap target for "Optimization Experiences" — arrow toggles, text navigates
+  // Mobile: split tap target for "Optimization Experiences"
+  // Arrow (▾): toggles Featured Experiments independently of Resources
+  // Text: navigates to /category/optimization-experience/
   document.querySelectorAll('[data-submenu-arrow]').forEach(arrow => {
     arrow.addEventListener('click', (e) => {
       e.stopPropagation();
-      if (!isMobile()) return;
-      // Toggle submenu directly
-      const link = arrow.closest('.dropdown-link[data-submenu]');
+      const link = arrow.closest('.dropdown-link[data-submenu-text]');
       if (!link) return;
-      const arrowSibling = arrow.nextElementSibling;
-      const submenu = arrowSibling?.classList.contains('dropdown-submenu')
-        ? arrowSibling
-        : findSubmenuSibling(link);
+      const submenu = link.nextElementSibling;
       if (submenu?.classList.contains('dropdown-submenu')) {
         submenu.classList.toggle('submenu-open');
       }
     });
   });
 
-  function findSubmenuSibling(link) {
-    // Skip over arrow button to find the submenu
-    let el = link.nextElementSibling;
-    if (el?.hasAttribute('data-submenu-arrow')) {
-      el = el.nextElementSibling;
-    }
-    if (el?.classList.contains('dropdown-submenu')) return el;
-    // Fallback: continue searching
-    while (el) {
-      if (el.classList.contains('dropdown-submenu')) return el;
-      el = el.nextElementSibling;
-    }
-    return null;
-  }
+  // Mobile: text label navigates to the category page (not Featured Experiments)
+  document.querySelectorAll('[data-submenu-text]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      window.location.href = link.href;
+    });
+  });
 
-  // Desktop (>= 768px): hover-triggered dropdowns with smart close timing
-  // — immediate close when switching to a different trigger
-  // — 175ms delay only when leaving toward own menu content
-  const isMobile = () => window.matchMedia('(max-width: 767px)').matches;
-  let activeMenu = null;
-
-  const desktopEventMap = new Map();
-
-  document.querySelectorAll('.dropdown-toggle[data-dropdown]').forEach(toggleBtn => {
-    const menu = toggleBtn.nextElementSibling;
+  // Desktop (>= 768px): hover-triggered dropdowns with simplified timing
+  // Wrap trigger + menu as one combined hover region — single mouseenter/mouseleave
+  // No timers, no grace periods — open on enter, close immediately on leave
+  document.querySelectorAll('.dropdown-toggle[data-dropdown]').forEach(triggerBtn => {
+    const menu = triggerBtn.nextElementSibling;
     if (!menu?.classList.contains('dropdown-menu')) return;
     if (isMobile()) return;
 
-    desktopEventMap.set(toggleBtn, { menu, isTrigger: true });
-    desktopEventMap.set(menu, { menu, isTrigger: false });
+    const wrapper = document.createElement('div');
+    wrapper.style.display = 'contents';
+    triggerBtn.parentNode.insertBefore(wrapper, triggerBtn);
+    wrapper.appendChild(triggerBtn);
+    wrapper.appendChild(menu);
 
-    menu.addEventListener('mouseenter', () => showMenu(menu));
-    menu.addEventListener('mouseleave', () => scheduleClose(menu));
-  });
-
-  document.addEventListener('mouseover', (e) => {
-    if (isMobile()) return;
-    const info = desktopEventMap.get(e.target);
-    if (!info) return;
-
-    if (info.isTrigger) {
-      // Entering a trigger: close previous menu immediately (not a different menu staying open)
-      if (activeMenu && activeMenu !== info.menu) {
-        activeMenu.style.display = 'none';
-      }
-      activeMenu = info.menu;
-      showMenu(info.menu);
-    } else {
-      // Entering/leaving a menu
-      showMenu(info.menu);
-    }
-  });
-
-  document.addEventListener('mouseout', (e) => {
-    if (isMobile()) return;
-    const related = e.relatedTarget;
-    const info = desktopEventMap.get(e.target);
-    if (!info) return;
-    // Only act on events from within our tracked elements
-    if (!desktopEventMap.has(related)) return;
-
-    if (!info.isTrigger && e.relatedTarget && !info.menu.contains(e.relatedTarget)) {
-      scheduleClose(info.menu);
-    }
-  });
-
-  function showMenu(menu) {
-    clearTimeout(menu._closeTimer);
-    menu._closeTimer = null;
-    menu.style.display = 'flex';
-  }
-
-  function scheduleClose(menu) {
-    clearTimeout(menu._closeTimer);
-    menu._closeTimer = setTimeout(() => {
+    wrapper.addEventListener('mouseenter', () => {
+      menu.style.display = 'flex';
+    });
+    wrapper.addEventListener('mouseleave', () => {
       menu.style.display = 'none';
-      menu._closeTimer = null;
-      if (activeMenu === menu) activeMenu = null;
-    }, 175);
-  }
+    });
+  });
 
   // Desktop: "Optimization Experiences" nested submenu hover reveal
-  document.querySelectorAll('.dropdown-link[data-submenu]').forEach(parentLink => {
-    const arrow = parentLink.querySelector('[data-submenu-arrow]');
-    const afterArrow = arrow ? arrow.nextElementSibling : parentLink.nextElementSibling;
-    const submenu = afterArrow?.classList.contains('dropdown-submenu') ? afterArrow : findSubmenuSibling(parentLink);
+  document.querySelectorAll('.dropdown-link[data-submenu-text]').forEach(parentLink => {
+    const afterLink = parentLink.nextElementSibling;
+    const submenu = afterLink?.classList.contains('dropdown-submenu') ? afterLink : null;
     if (!submenu?.classList.contains('dropdown-submenu')) return;
     if (isMobile()) return;
 
@@ -586,8 +538,8 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
     submenu.addEventListener('mouseleave', scheduleClose);
   });
 
-  // Close mobile nav when clicking a dropdown link (not the submenu toggle)
-  nav?.querySelectorAll('.dropdown-link:not([data-submenu])').forEach(link => {
+  // Close mobile nav when clicking a non-split dropdown link
+  nav?.querySelectorAll('.dropdown-link:not([data-submenu-text])').forEach(link => {
     link.addEventListener('click', () => {
       nav.classList.remove('open');
       toggle?.setAttribute('aria-expanded', 'false');
