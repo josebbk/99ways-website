@@ -26,7 +26,7 @@ Listed for completeness — pull if a later section needs them (e.g. social shar
 
 These are content images from the current live WordPress site's media library, not part of the brand assets package. The CLI agent won't find them in `assets/`. There's no CMS import path in an Astro-only stack — re-download each from the URLs below and place them under `src/assets/` (so they go through Astro's built-in `astro:assets` image optimization) or `public/` if you need a plain static path instead. Pair each image with its corresponding Astro content-collection entry (see §Academy blog post note below) rather than hardcoding paths inline.
 
-**Testimonial screenshots (Section 4, filmstrip — 9 images, in display order):**
+**Testimonial screenshots (Section 4, carousel — 9 images, in display order):**
 1. `https://99ways.io/wp-content/uploads/2026/07/Screenshot-2025-10-21-at-11.46.12.webp`
 2. `https://99ways.io/wp-content/uploads/2026/07/Screenshot-2025-10-20-at-20.10.05-e1761003445793.webp`
 3. `https://99ways.io/wp-content/uploads/2026/07/Screenshot-2025-10-21-at-11.39.31.webp`
@@ -41,7 +41,18 @@ These are content images from the current live WordPress site's media library, n
 - Iman Nazari: `https://99ways.io/wp-content/uploads/2026/07/2026-05-26-17.45.07.jpg`
 - Moein Heshmati: `https://99ways.io/wp-content/uploads/2026/07/cropped_circle_image-9.webp`
 
-**Academy blog post thumbnails (Section 6):** not captured in the fetched markup (the live homepage doesn't render post-card thumbnails in the accessible content) — no automated import path exists anymore, so pull each of the 3 posts' featured images directly from the corresponding live WordPress post pages and store them alongside that post's Astro content-collection entry.
+**Academy blog post thumbnails (Section 6):** resolved — pulled directly from each post's og:image:
+- "Story of 74% CVR lift..." → `https://99ways.io/wp-content/uploads/2026/09/Gemini_Generated_Image_2x5sm32x5sm32x5s.webp`
+- "Why Experimentation Is a Must-Have..." → `https://99ways.io/wp-content/uploads/2026/09/Gemini_Generated_Image_t2bh23t2bh23t2bh.webp`
+- "Confidence vs PostHog..." → `https://99ways.io/wp-content/uploads/2026/09/Gemini_Generated_Image_wwkt3twwkt3twwkt.webp`
+
+**Footer social icons (Section 8):** the current build has incorrect icons for Upwork (×2), Fiverr, and Medium — GitHub and LinkedIn are already correct. Real source files, pulled directly from the live site (re-host, don't hotlink):
+- LinkedIn (keep as-is, already correct): `https://99ways.io/wp-content/uploads/2025/10/LinkedIn_icon.svg_.webp`
+- Iman's Upwork: `https://99ways.io/wp-content/uploads/2026/07/upwork-roundedsquare-1.webp`
+- Agency's Upwork (distinct from Iman's — already a different source file on the live site): `https://99ways.io/wp-content/uploads/2026/07/Untitled-design-20-1.webp`
+- Fiverr: `https://99ways.io/wp-content/uploads/2026/07/Fiverr_Logo_fiverr.webp`
+- GitHub (keep as-is, already correct): `https://99ways.io/wp-content/uploads/2025/11/5968866.png`
+- Medium: `https://99ways.io/wp-content/uploads/2026/07/medium-logo-icon.webp`
 
 **Video (Section 3):** YouTube embed, ID `STouQwJZ4bY` — no local asset needed, embed directly.
 
