@@ -34,6 +34,10 @@ Theme: **dark only.** No light-mode toggle is in scope.
   /* Structural (derived) */
   --color-border: rgba(181, 184, 177, 0.24);
   --color-border-strong: rgba(181, 184, 177, 0.4);
+
+  /* CTA text override — exception, see note below */
+  --color-cta-text: #0F172A;
+  --color-cta-text-hover: #000000;
 }
 ```
 
@@ -42,6 +46,7 @@ Theme: **dark only.** No light-mode toggle is in scope.
 - `--color-action` (green) is reserved for CTAs and action-oriented elements: primary button fill, CTA hover/focus states, active/confirmation indicators. Not for nav, not for decorative accents, not as a general highlight — keep it a clear "this is an action" signal, not a dominant site color.
 - `--color-accent` (blue) covers everything else interactive: inline links, nav hover/active, focus rings on non-CTA elements, logo pupils.
 - Never use `#147D40` / `#6BD98D` to recolor the logo itself (binding brand rule).
+- **`--color-cta-text` / `--color-cta-text-hover` are a deliberate, scoped exception to the closed palette above** — added per a direct client requirement for the "Book Intro Call" button specifically. They're not derived from the brand palette and shouldn't be reused elsewhere; if another element needs a text-color override, treat it as its own decision, don't default to these.
 
 ---
 
@@ -115,24 +120,39 @@ Tightened from the previous pass for a more compact, refined layout — still mo
 ## 5. Components
 
 **Button — primary (CTA)**
-- Background `--color-action`, text `--color-bg`, font `--text-label` (Plex Mono, weight 600), padding `10px 24px` (was `12px 28px` — more compact), border-radius 2–4px.
-- Hover/focus: background darkens ~10%, focus ring in `--color-action` (not blue — CTAs stay in the green "action" channel end to end).
+- Background `--color-action`, text `--color-cta-text` (default `#0F172A`, hover `#000000` — see §1), font `--text-label` (Plex Mono, weight 600), padding `10px 24px` (was `12px 28px` — more compact), border-radius 2–4px.
+- Hover/focus: background darkens ~10%, text color shifts to `--color-cta-text-hover`, focus ring in `--color-action` (not blue — CTAs stay in the green "action" channel end to end). No underline on hover — this button never gets one, regardless of how it's marked up (e.g. as an `<a>`).
+- Applies to every instance of "Book Intro Call" (hero and pre-footer) — they're the same button, same styling, same behavior.
 
 **Button — secondary/ghost**
 - Transparent background, 1px `--color-border-strong` border, text `--color-text`, same padding/type as primary.
-- Hover: border becomes `--color-accent`.
+- Hover: border becomes `--color-accent`. No underline on hover (applies to "Contact Us" in the header).
 
 **Link (inline/nav)**
 - `--color-text` default, `--color-accent` on hover/active, no underline at rest, underline on hover.
 
-**Card (testimonial filmstrip / blog grid)**
+**Link — "view all" / arrow link (new)**
+- A distinct component from the generic inline link above — used for "View all posts" and similar "see more" links. `--color-text-muted` default, `--color-accent` on hover — text color shift, no underline at rest or on hover.
+- Small arrow icon (→) positioned to the left of the text, hidden/transparent at rest, fades and slides in from the left on hover (150–200ms ease, per §7 Motion).
+
+**Card (testimonial carousel / blog grid)**
 - Background matches its parent section (`--color-bg` or `--color-bg-alt`, whichever the section is on), 1px `--color-border`, padding `--space-4`, no drop shadows.
+
+**Carousel (testimonials — new)**
+- 3 cards visible: center card at 100% opacity / 100% scale (focal), left and right cards at reduced opacity (derived: ~50%) and reduced scale (derived: ~85–90%).
+- Base card shell follows the Card rules above; the opacity/scale treatment layers on top, driven by position (center vs. side), not a separate card variant.
+- Transitions: directional horizontal slide, per §7 Motion timing (150–200ms — may need to run slightly longer for a slide of this distance; use judgment, keep it snappy, not floaty).
+- Same carousel — same depth/scale treatment — on mobile and desktop. Don't swap to a flat filmstrip on small screens; adjust card sizing instead so 3-across still fits.
 
 **Avatar/photo (About Us and similar)**
 - Cap size: 96px mobile → 128px desktop, circular crop. Deliberately small — the previous pass ran oversized imagery here; keep founder photos as identity markers, not hero-scale visuals.
 
 **Divider**
 - 1px, `--color-border`.
+
+**Nav dropdown**
+- **Desktop:** opens on `mouseenter`, closes on `mouseleave` with a short delay (~150–200ms) to prevent flicker when the cursor moves from trigger to menu. Not click-triggered on desktop.
+- **Mobile/tablet:** click/tap-triggered, accordion behavior — opening one top-level dropdown closes any other open one. A nested item (e.g. "Featured Experiments" under "Optimization Experiences") reveals on tap of its parent, same accordion logic applies one level down.
 
 ---
 
@@ -145,7 +165,7 @@ New requirement — sections alternate between `--color-bg` and `--color-bg-alt`
 | Header | `--color-bg` |
 | Hero | `--color-bg` |
 | Video ("How I Find") | `--color-bg-alt` |
-| Testimonials filmstrip | `--color-bg` |
+| Testimonials carousel | `--color-bg` |
 | About Us | `--color-bg-alt` |
 | Academy blog grid | `--color-bg` |
 | Pre-footer CTA | `--color-bg-alt` |
