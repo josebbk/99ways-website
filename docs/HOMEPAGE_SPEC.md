@@ -19,25 +19,30 @@ Asset paths reference `ASSET_MANIFEST.md`.
 
 **Background:** `--color-bg`.
 
+**Border:** 1px `--color-border` on the bottom edge only. Required because Hero (the section directly below) also uses `--color-bg` — without this line the two sections visually merge into one block with no boundary.
+
 **Structure:** logo (left) — nav (center/right) — CTA (right)
 
 - Logo: `logo/wordmark/dark/99ways-wordmark-dark-background.svg`, full wordmark, min 180px width. On mobile/collapsed nav, swap to `logo/compact/dark/99ways-compact-dark-background.svg`, min 64px.
 - **Favicon:** `icons/favicon/99ways-favicon.svg` — replace whatever default favicon the project currently ships with. Already confirmed available, see `ASSET_MANIFEST.md` §1.
-- **Nav dropdown behavior (new requirement):**
-  - **Desktop:** Services and Resources open on `mouseenter`, close on `mouseleave` — not click-triggered. Add a short close delay (~150–200ms) so moving the cursor briefly off the trigger toward the menu doesn't flicker it shut.
-  - **Mobile/tablet:** stays click-triggered, accordion behavior — opening one dropdown automatically closes any other open one.
-  - **"Featured Experiments" sub-item:** hidden by default. On desktop, reveals on hover over its parent "Optimization Experiences." On mobile/tablet, reveals on tap. "Optimization Experiences" itself stays a normal clickable link to `/category/optimization-experience/` in both cases — the hover/tap only controls whether its child is visible, it doesn't intercept the parent's own click.
+- **Nav dropdown behavior — corrected spec (replaces the previous version of this rule):**
+  - **Desktop — trigger interaction:** "Services" and "Resources" are dropdown triggers only, not links. No URL, no `pointer` cursor on hover — cursor stays default over the label itself. Items *inside* each dropdown remain normal links with `pointer` cursor.
+  - **Desktop — open/close timing:** opens on `mouseenter`. Closes on `mouseleave` **with a short delay (~150–200ms) only when the cursor is moving from the trigger toward that same dropdown's own menu content** (prevents flicker on the direct path down into the menu). If the cursor instead moves to a *different* top-level trigger (e.g. from "Services" over to "Resources") while a dropdown is open, the open one closes **immediately** — no delay in that case. The delay is for "reaching the menu," not for "switching menus."
+  - **Desktop — "Optimization Experiences" sub-dropdown indicator:** a right-facing arrow (`>`), aligned to the far right of that row, signals the nested "Featured Experiments" submenu. Purely a visual indicator on desktop — the actual reveal is still hover-triggered (see below), the arrow doesn't add its own separate interaction on desktop.
+  - **Mobile/tablet:** click/tap-triggered, accordion behavior — opening one top-level dropdown closes any other open one immediately.
+  - **Mobile/tablet — "Optimization Experiences" split control:** the row shows a down-facing arrow (▾) instead of the desktop `>`. Tapping the **arrow** toggles the "Featured Experiments" submenu open/closed. Tapping the **text label** itself navigates directly to `/category/optimization-experience/` — these are two distinct tap targets on the same row, not one combined behavior.
+  - **"Featured Experiments" sub-item:** hidden by default in all cases. Desktop: reveals on hover over "Optimization Experiences." Mobile/tablet: reveals only via the arrow tap described above.
 - Nav items (`--text-label` styling), preserve structure and links exactly:
-  - **Services** (dropdown)
+  - **Services** (dropdown trigger, no direct link — see above)
     - Conversion Rate Optimization → `/hire-cro-expert/`
     - PostHog & Product Analytics → `/hire-posthog-expert-guide/`
     - Hyros & Tracking Setup → `/hire-hyros-expert-guide/`
-  - **Resources** (dropdown)
+  - **Resources** (dropdown trigger, no direct link — see above)
     - Guides and How-tos → `/category/guides-how-to/`
     - PostHog Feature Breakdowns → `/category/posthog-feature-breakdown/`
     - Tools Comparison → `/category/tools-comparison/`
-    - Optimization Experiences → `/category/optimization-experience/`
-      - Featured Experiments → `/category/optimization-experience/featured-experiments/` (hidden until hover/tap — see above)
+    - Optimization Experiences → `/category/optimization-experience/` (see split tap-target behavior above for mobile; desktop is a normal link with hover-reveal on its child)
+      - Featured Experiments → `/category/optimization-experience/featured-experiments/` (hidden until revealed — see above)
 - CTA button (secondary/ghost style): **"Contact Us"** → `/contact-form/`. Hover: no underline (per `design.md` §5 CTA hover rule — this button follows the no-underline CTA treatment, not the generic inline-link underline-on-hover rule).
 - Clear space around logo per `design.md` §4 — do not let nav items crowd it.
 
@@ -79,8 +84,15 @@ Asset paths reference `ASSET_MANIFEST.md`.
 - **Depth styling:** center card at full opacity and 100% scale. Side cards at reduced opacity (derived — try ~50%) and a slight scale reduction (derived — try ~85–90%), per `design.md` §5 (new Carousel component entry).
 - **Auto-rotation:** advances through all 9 reviews automatically every few seconds (derived default: 5s) with a smooth, directional horizontal slide — pauses on hover/touch interaction, resumes after a short idle period.
 - **Side-card interaction:** clicking a side card (left or right) smoothly transitions it to the center position — same directional slide as auto-rotation, just user-triggered.
-- **Lightbox:** clicking the **center** card opens a full-screen/near-full-screen modal showing that review at full size, uncropped. Inside the lightbox, the same left/center/right faded-peek pattern is used for navigation — clicking the faded prev/next peek centers it (mirrors the main carousel's interaction, not separate arrow-button controls). Click outside the image or a close button dismisses the lightbox.
-- **Aspect ratio & cropping:** use image #4 (`Client review: Conversion Rate Optimization Expert quick job`) as the baseline height/scale for carousel cards. Images at or below that height render fully within the card. Taller images are cropped top-down (`object-fit: cover; object-position: top;`) inside the carousel card only — never in the lightbox, where every image is shown full and uncropped.
+- **Lightbox:** clicking the **center** card opens a full-screen/near-full-screen modal showing that review at full size, uncropped (`object-fit: contain`, dark backdrop overlay). Inside the lightbox, the same left/center/right faded-peek pattern is used for navigation — clicking the faded prev/next peek centers it (mirrors the main carousel's interaction, not separate arrow-button controls). Dismiss via: clicking the backdrop outside the image, a close button, or the `Esc` key — all three must work.
+- **Aspect ratio & cropping — corrected spec (this replaces the previous version of this rule, which allowed horizontal cropping via a plain `object-fit: cover` and caused a real bug):**
+  - Baseline center-card container: **385.75px × 140.83px** (~2.74:1), measured from image #4 (`Client review: Conversion Rate Optimization Expert quick job`).
+  - **Zero horizontal cropping — binding, no exceptions.** Every review image renders at 100% of its container's width. Never crop left/right edges, regardless of the source image's native aspect ratio.
+  - **Vertical cropping only:** if an image is taller than the baseline ratio once scaled to full container width, crop strictly top-down (`object-position: top`) to fit the container height. This is not achieved by a bare `object-fit: cover` on a fixed-aspect box (that can crop horizontally when a source image is narrower/taller than the container) — implementation needs to guarantee full-width rendering first, then clip vertical overflow only.
+  - Side cards follow the identical zero-horizontal-crop rule, on top of their own opacity/scale reduction (~0.5–0.7 opacity, recessed/scaled positioning).
+  - In the lightbox, every image is always shown full and uncropped in both dimensions (`object-fit: contain`) — the cropping rules above apply to the carousel card only.
+- **Card framing:** the center card's wrapper (`.card.card-center`, and by extension the side cards) has no internal padding — the image spans edge-to-edge within the card bounds. The card border hugs the image's outer edge directly, not a padded box around it. This overrides the generic `--space-4` card padding from `design.md` §5 for this component specifically.
+- **Mobile/tablet overflow (binding):** the section's outer container uses `overflow-x: hidden`. Below `768px`, the carousel must fit within `100vw` minus the section's normal horizontal padding, with no horizontal page scroll introduced anywhere on the page. Still the same 3-card depth carousel (per the mobile-first decision already made) — this is about containment, not falling back to a simpler layout.
 - 9 reviews total, order and alt text below (preserve alt text for accessibility/SEO — do not shorten):
 
   1. `Client review: Funnel Optimization Assessment and Recommendations`
@@ -103,7 +115,7 @@ Asset paths reference `ASSET_MANIFEST.md`.
 **Background:** `--color-bg-alt`.
 
 - Section title: **"About Us"** (`--text-h2`).
-- **Layout:** two-column founder cards side by side (desktop), stacked (mobile). Divider between them: 1px `--color-border`, vertical on desktop / horizontal on mobile. **This was already specified in an earlier pass of this doc — re-confirmed here because it was called out again in this update round. Verify it's actually present in the current build; if it is, no change needed here.**
+- **Layout:** two-column founder cards side by side (desktop), stacked (mobile). Divider between them: 1px `--color-border`, vertical on desktop. **Corrected: hidden entirely on mobile/tablet — this replaces the earlier "horizontal on mobile" version of this rule, which is no longer correct.**
 - **Photos: small and identity-scale, not hero-scale.** Cap per `design.md` §5 — 96px mobile / 128px desktop, circular crop. The previous pass ran these too large for a compact layout; keep them proportionate to the name/role text next to them, not a dominant visual element.
 
 **Card 1**
