@@ -21,9 +21,14 @@ const navItems = [
       { label: 'Guides and How-tos', href: '/category/guides-how-to/' },
       { label: 'PostHog Feature Breakdowns', href: '/category/posthog-feature-breakdown/' },
       { label: 'Tools Comparison', href: '/category/tools-comparison/' },
-      { label: 'Optimization Experiences', href: '/category/optimization-experience/', children: [
-        { label: 'Featured Experiments', href: '/category/optimization-experience/featured-experiments/' },
-      ]},
+      {
+        label: 'Optimization Experiences',
+        href: '/category/optimization-experience/',
+        splitArrow: true,
+        children: [
+          { label: 'Featured Experiments', href: '/category/optimization-experience/featured-experiments/' },
+        ],
+      },
     ],
   },
 ];
@@ -58,7 +63,15 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
             <ul class="dropdown-menu" role="menu">
               {item.children.map(child => (
                 <li role="none">
-                  <a class="dropdown-link" href={child.href} role="menuitem" data-submenu={child.children ? '' : undefined}>{child.label}</a>
+                  <a class="dropdown-link nav-split-link" href={child.href} role="menuitem" data-submenu={child.children ? '' : undefined}>
+                    {child.label}
+                    {child.splitArrow && (
+                      <button class="dropdown-submenu-arrow" type="button" aria-label="Toggle Featured Experiments" data-submenu-arrow>
+                        <span class="arrow-desktop">&gt;</span>
+                        <span class="arrow-mobile">▾</span>
+                      </button>
+                    )}
+                  </a>
                   {child.children && (
                     <ul class="dropdown-submenu" role="menu">
                       {child.children.map(sub => (
@@ -181,7 +194,7 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
     font-size: var(--text-label);
     line-height: 1.4;
     letter-spacing: 0.02em;
-    cursor: pointer;
+    cursor: default;
     text-decoration: none;
     transition: color 150ms ease;
     width: 100%;
@@ -300,6 +313,7 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
       letter-spacing: 0.02em;
       padding: var(--space-2) var(--space-3);
       border-radius: 2px;
+      cursor: default;
     }
 
     .dropdown-menu {
@@ -315,6 +329,11 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
       display: flex;
     }
 
+    /* Desktop: hide chevron on top-level triggers */
+    .dropdown-chevron {
+      display: none;
+    }
+
     /* Desktop: hide submenus by default, reveal on parent hover */
     .dropdown-submenu {
       display: none;
@@ -323,6 +342,33 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
     .dropdown-link:hover + .dropdown-submenu {
       display: flex;
     }
+
+    /* Desktop: split link text has no pointer cursor */
+    .nav-split-link {
+      cursor: default;
+    }
+
+    /* Desktop: arrow indicator visible, purely visual, matches menu font/color */
+    .dropdown-submenu-arrow {
+      display: flex;
+      cursor: default;
+      width: auto;
+      height: auto;
+      background: none;
+      border: none;
+      padding: 0;
+      color: var(--color-text);
+      font-family: var(--font-brand);
+      font-size: var(--text-label);
+      line-height: 1;
+    }
+
+    .dropdown-submenu-arrow:hover {
+      color: var(--color-accent);
+    }
+
+    .arrow-desktop { display: inline; }
+    .arrow-mobile { display: none; }
 
     .header-cta {
       margin-top: 0;
@@ -336,6 +382,51 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
 
     .header-compact {
       display: block;
+    }
+
+    /* Mobile: split link is a flex row — text navigates, arrow toggles */
+    .nav-split-link {
+      display: flex;
+      align-items: center;
+      cursor: default;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-4);
+    }
+
+    /* Mobile: arrow button — separate tap target */
+    .dropdown-submenu-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      color: var(--color-text-muted);
+      font-family: var(--font-brand);
+      font-size: var(--text-label);
+      line-height: 1;
+      transition: color 150ms ease;
+    }
+
+    .dropdown-submenu-arrow:hover {
+      color: var(--color-accent);
+    }
+
+    .dropdown-submenu-arrow:active {
+      color: var(--color-accent);
+    }
+
+    .arrow-desktop { display: none; }
+    .arrow-mobile { display: inline; }
+
+    /* Mobile: submenu margin for indentation */
+    .dropdown-submenu {
+      margin-top: var(--space-1);
+      padding-left: var(--space-3);
     }
   }
 </style>
@@ -354,7 +445,7 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
     toggleBtn.addEventListener('click', () => {
       const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
 
-      // Close all other dropdowns (accordion)
+      // Close all other dropdowns immediately
       document.querySelectorAll('.dropdown-toggle[data-dropdown]').forEach(other => {
         if (other !== toggleBtn) {
           other.setAttribute('aria-expanded', 'false');
@@ -363,66 +454,113 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
 
       // Toggle current
       toggleBtn.setAttribute('aria-expanded', String(!isExpanded));
-
-      // On mobile: toggle the first-level nested submenu via class
-      const menu = toggleBtn.nextElementSibling;
-      if (menu?.classList.contains('dropdown-menu')) {
-        const firstChild = menu.querySelector(':scope > li > .dropdown-link[data-submenu]');
-        if (firstChild) {
-          const submenu = firstChild.nextElementSibling;
-          if (submenu?.classList.contains('dropdown-submenu')) {
-            submenu.classList.toggle('submenu-open');
-          }
-        }
-      }
     });
   });
 
-  // Mobile/tablet: nested submenu toggle (accordion within accordion)
-  document.querySelectorAll('.dropdown-link[data-submenu]').forEach(link => {
-    link.addEventListener('click', (e) => {
+  // Mobile: split tap target for "Optimization Experiences" — arrow toggles, text navigates
+  document.querySelectorAll('[data-submenu-arrow]').forEach(arrow => {
+    arrow.addEventListener('click', (e) => {
       e.stopPropagation();
-      const submenu = link.nextElementSibling;
+      if (!isMobile()) return;
+      // Toggle submenu directly
+      const link = arrow.closest('.dropdown-link[data-submenu]');
+      if (!link) return;
+      const arrowSibling = arrow.nextElementSibling;
+      const submenu = arrowSibling?.classList.contains('dropdown-submenu')
+        ? arrowSibling
+        : findSubmenuSibling(link);
       if (submenu?.classList.contains('dropdown-submenu')) {
         submenu.classList.toggle('submenu-open');
       }
     });
   });
 
-  // Desktop (>= 768px): hover-triggered dropdowns with close delay
+  function findSubmenuSibling(link) {
+    // Skip over arrow button to find the submenu
+    let el = link.nextElementSibling;
+    if (el?.hasAttribute('data-submenu-arrow')) {
+      el = el.nextElementSibling;
+    }
+    if (el?.classList.contains('dropdown-submenu')) return el;
+    // Fallback: continue searching
+    while (el) {
+      if (el.classList.contains('dropdown-submenu')) return el;
+      el = el.nextElementSibling;
+    }
+    return null;
+  }
+
+  // Desktop (>= 768px): hover-triggered dropdowns with smart close timing
+  // — immediate close when switching to a different trigger
+  // — 175ms delay only when leaving toward own menu content
   const isMobile = () => window.matchMedia('(max-width: 767px)').matches;
+  let activeMenu = null;
+
+  const desktopEventMap = new Map();
 
   document.querySelectorAll('.dropdown-toggle[data-dropdown]').forEach(toggleBtn => {
     const menu = toggleBtn.nextElementSibling;
     if (!menu?.classList.contains('dropdown-menu')) return;
-    // Only attach desktop hover handlers on desktop
     if (isMobile()) return;
 
-    let closeTimer = null;
+    desktopEventMap.set(toggleBtn, { menu, isTrigger: true });
+    desktopEventMap.set(menu, { menu, isTrigger: false });
 
-    function showMenu() {
-      clearTimeout(closeTimer);
-      closeTimer = null;
-      menu.style.display = 'flex';
-    }
-
-    function scheduleClose() {
-      clearTimeout(closeTimer);
-      closeTimer = setTimeout(() => {
-        menu.style.display = 'none';
-        closeTimer = null;
-      }, 175);
-    }
-
-    toggleBtn.addEventListener('mouseenter', showMenu);
-    toggleBtn.addEventListener('mouseleave', scheduleClose);
-    menu.addEventListener('mouseenter', showMenu);
-    menu.addEventListener('mouseleave', scheduleClose);
+    menu.addEventListener('mouseenter', () => showMenu(menu));
+    menu.addEventListener('mouseleave', () => scheduleClose(menu));
   });
+
+  document.addEventListener('mouseover', (e) => {
+    if (isMobile()) return;
+    const info = desktopEventMap.get(e.target);
+    if (!info) return;
+
+    if (info.isTrigger) {
+      // Entering a trigger: close previous menu immediately (not a different menu staying open)
+      if (activeMenu && activeMenu !== info.menu) {
+        activeMenu.style.display = 'none';
+      }
+      activeMenu = info.menu;
+      showMenu(info.menu);
+    } else {
+      // Entering/leaving a menu
+      showMenu(info.menu);
+    }
+  });
+
+  document.addEventListener('mouseout', (e) => {
+    if (isMobile()) return;
+    const related = e.relatedTarget;
+    const info = desktopEventMap.get(e.target);
+    if (!info) return;
+    // Only act on events from within our tracked elements
+    if (!desktopEventMap.has(related)) return;
+
+    if (!info.isTrigger && e.relatedTarget && !info.menu.contains(e.relatedTarget)) {
+      scheduleClose(info.menu);
+    }
+  });
+
+  function showMenu(menu) {
+    clearTimeout(menu._closeTimer);
+    menu._closeTimer = null;
+    menu.style.display = 'flex';
+  }
+
+  function scheduleClose(menu) {
+    clearTimeout(menu._closeTimer);
+    menu._closeTimer = setTimeout(() => {
+      menu.style.display = 'none';
+      menu._closeTimer = null;
+      if (activeMenu === menu) activeMenu = null;
+    }, 175);
+  }
 
   // Desktop: "Optimization Experiences" nested submenu hover reveal
   document.querySelectorAll('.dropdown-link[data-submenu]').forEach(parentLink => {
-    const submenu = parentLink.nextElementSibling;
+    const arrow = parentLink.querySelector('[data-submenu-arrow]');
+    const afterArrow = arrow ? arrow.nextElementSibling : parentLink.nextElementSibling;
+    const submenu = afterArrow?.classList.contains('dropdown-submenu') ? afterArrow : findSubmenuSibling(parentLink);
     if (!submenu?.classList.contains('dropdown-submenu')) return;
     if (isMobile()) return;
 
@@ -430,6 +568,7 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
 
     function showSubmenu() {
       clearTimeout(closeTimer);
+      closeTimer = null;
       submenu.style.display = 'flex';
     }
 
