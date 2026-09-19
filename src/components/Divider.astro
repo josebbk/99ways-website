@@ -1,0 +1,14 @@
+---
+// Divider component -- 1px, color-border
+// Per design.md section 5
+---
+
+<hr class="divider" style={Astro.props.vertical ? "writing-mode: vertical-lr; border-bottom: none; border-left: 1px solid var(--color-border);" : ""} />
+
+<style>
+  .divider {
+    border: none;
+    border-bottom: 1px solid var(--color-border);
+    width: 100%;
+  }
+</style>

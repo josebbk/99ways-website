@@ -1,0 +1,32 @@
+---
+// Button component with primary, secondary, and ghost variants
+// Per design.md §5
+
+const { variant = 'primary' } = Astro.props;
+const btnClass = `btn-${variant}`;
+---
+
+<a href="#" class={btnClass}>
+  <slot />
+</a>
+
+<style>
+  .btn-primary,
+  .btn-secondary,
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: 10px 24px;
+    font-family: var(--font-brand);
+    font-weight: 600;
+    font-size: var(--text-label);
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+  }
+</style>

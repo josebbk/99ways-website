@@ -1,0 +1,581 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Button from '../../components/Button.astro';
+import Link from '../../components/Link.astro';
+import Card from '../../components/Card.astro';
+import Avatar from '../../components/Avatar.astro';
+import Divider from '../../components/Divider.astro';
+---
+
+<BaseLayout title="99Ways — Style Guide">
+  <div class="styleguide container">
+    <h1 class="text-display">Style Guide</h1>
+    <p class="text-body text-muted" style="margin-bottom: var(--space-8);">
+      Design tokens, components, and states for 99ways.io. Generated from docs/Design.md.
+    </p>
+
+    <!-- Typography -->
+    <section class="section-block">
+      <h2 class="text-h2" style="margin-bottom: var(--space-4);">Typography</h2>
+      <p class="text-small text-muted" style="margin-bottom: var(--space-6);">
+        Fraunces (Black/900, SOFT 100) · IBM Plex Sans (400) · IBM Plex Mono (500)
+      </p>
+      <Divider />
+
+      <div class="type-scale">
+        <div class="type-row">
+          <div class="type-meta">
+            <span class="text-label type-name">Display</span>
+            <span class="text-small text-muted type-size">32px → 44px</span>
+          </div>
+          <p class="text-display">Hero heading</p>
+        </div>
+        <div class="type-row">
+          <div class="type-meta">
+            <span class="text-label type-name">H2</span>
+            <span class="text-small text-muted type-size">22px → 28px</span>
+          </div>
+          <p class="text-h2">Section title</p>
+        </div>
+        <div class="type-row">
+          <div class="type-meta">
+            <span class="text-label type-name">H3</span>
+            <span class="text-small text-muted type-size">17px → 20px</span>
+          </div>
+          <p class="text-h3">Card / founder name</p>
+        </div>
+        <div class="type-row">
+          <div class="type-meta">
+            <span class="text-label type-name">Body</span>
+            <span class="text-small text-muted type-size">15px → 16px</span>
+          </div>
+          <p class="text-body">Paragraph copy, bios, excerpts</p>
+        </div>
+        <div class="type-row">
+          <div class="type-meta">
+            <span class="text-label type-name">Label</span>
+            <span class="text-small text-muted type-size">13px → 14px</span>
+          </div>
+          <p class="text-label">Nav, buttons, tags, meta</p>
+        </div>
+        <div class="type-row">
+          <div class="type-meta">
+            <span class="text-label type-name">Small</span>
+            <span class="text-small text-muted type-size">12px → 13px</span>
+          </div>
+          <p class="text-small">Legal, footer fine print</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Fonts -->
+    <section class="section-block">
+      <h2 class="text-h2" style="margin-bottom: var(--space-4);">Fonts</h2>
+      <Divider />
+
+      <div class="font-grid">
+        <div class="font-card">
+          <span class="text-label text-muted">Primary</span>
+          <p class="text-display" style="margin: var(--space-2) 0;">Fraunces</p>
+          <p class="text-small text-muted">Black/900, SOFT 100</p>
+          <p class="text-body" style="font-size: 0.85em;">Headings, nav, section &amp; card titles</p>
+        </div>
+        <div class="font-card">
+          <span class="text-label text-muted">Body</span>
+          <p class="text-display" style="margin: var(--space-2) 0;">IBM Plex Sans</p>
+          <p class="text-small text-muted">400 (regular)</p>
+          <p class="text-body" style="font-size: 0.85em;">Paragraph copy, bios, excerpts</p>
+        </div>
+        <div class="font-card">
+          <span class="text-label text-muted">Brand</span>
+          <p class="text-display" style="margin: var(--space-2) 0;">IBM Plex Mono</p>
+          <p class="text-small text-muted">500 / 600 (medium, semibold)</p>
+          <p class="text-body" style="font-size: 0.85em;">CTA button labels, brand tags</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Colors -->
+    <section class="section-block">
+      <h2 class="text-h2" style="margin-bottom: var(--space-4);">Colors</h2>
+      <Divider />
+
+      <div class="color-palette">
+        <div class="color-swatch">
+          <div class="color-swatch-preview" style="background: var(--color-bg); border: 1px solid var(--color-border);"></div>
+          <span class="text-label">Bg (default)</span>
+          <span class="text-small text-muted">#292B2A</span>
+        </div>
+        <div class="color-swatch">
+          <div class="color-swatch-preview" style="background: var(--color-bg-alt); border: 1px solid var(--color-border);"></div>
+          <span class="text-label">Bg (alt)</span>
+          <span class="text-small text-muted">#313330</span>
+        </div>
+        <div class="color-swatch">
+          <div class="color-swatch-preview" style="background: var(--color-text);"></div>
+          <span class="text-label">Text</span>
+          <span class="text-small text-muted">#F4F3EF</span>
+        </div>
+        <div class="color-swatch">
+          <div class="color-swatch-preview" style="background: var(--color-text-muted);"></div>
+          <span class="text-label">Text muted</span>
+          <span class="text-small text-muted">#B5B8B1</span>
+        </div>
+        <div class="color-swatch">
+          <div class="color-swatch-preview" style="background: var(--color-accent);"></div>
+          <span class="text-label">Accent (blue)</span>
+          <span class="text-small text-muted">#A6BAFF</span>
+        </div>
+        <div class="color-swatch">
+          <div class="color-swatch-preview" style="background: var(--color-action);"></div>
+          <span class="text-label">Action (green)</span>
+          <span class="text-small text-muted">#6BD98D</span>
+        </div>
+        <div class="color-swatch">
+          <div class="color-swatch-preview" style="background: var(--color-border);"></div>
+          <span class="text-label">Border</span>
+          <span class="text-small text-muted">rgba(181,184,177,0.24)</span>
+        </div>
+        <div class="color-swatch">
+          <div class="color-swatch-preview" style="background: var(--color-border-strong);"></div>
+          <span class="text-label">Border (strong)</span>
+          <span class="text-small text-muted">rgba(181,184,177,0.40)</span>
+        </div>
+      </div>
+
+      <!-- Bg pairing demo -->
+      <div class="bg-pairing" style="margin-top: var(--space-6);">
+        <h3 class="text-h3" style="margin-bottom: var(--space-3);">Bg / Bg-alt pairing</h3>
+        <div class="bg-pairing-row">
+          <div class="bg-pairing-cell bg-default">
+            <span class="text-label">Default section</span>
+            <p class="text-body" style="margin-top: var(--space-2);">
+              --color-bg (#292B2A)
+            </p>
+          </div>
+          <div class="bg-pairing-cell bg-alt">
+            <span class="text-label">Alternate section</span>
+            <p class="text-body" style="margin-top: var(--space-2);">
+              --color-bg-alt (#313330)
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Spacing -->
+    <section class="section-block">
+      <h2 class="text-h2" style="margin-bottom: var(--space-4);">Spacing Scale</h2>
+      <Divider />
+
+      <div class="spacing-grid">
+        <div class="spacing-item">
+          <div class="spacing-bar" style="--space-val: 4px; width: 4px;"></div>
+          <span class="text-label">--space-1</span>
+          <span class="text-small text-muted">4px</span>
+        </div>
+        <div class="spacing-item">
+          <div class="spacing-bar" style="--space-val: 8px; width: 8px;"></div>
+          <span class="text-label">--space-2</span>
+          <span class="text-small text-muted">8px</span>
+        </div>
+        <div class="spacing-item">
+          <div class="spacing-bar" style="--space-val: 12px; width: 12px;"></div>
+          <span class="text-label">--space-3</span>
+          <span class="text-small text-muted">12px</span>
+        </div>
+        <div class="spacing-item">
+          <div class="spacing-bar" style="--space-val: 16px; width: 16px;"></div>
+          <span class="text-label">--space-4</span>
+          <span class="text-small text-muted">16px</span>
+        </div>
+        <div class="spacing-item">
+          <div class="spacing-bar" style="--space-val: 24px; width: 24px;"></div>
+          <span class="text-label">--space-6</span>
+          <span class="text-small text-muted">24px</span>
+        </div>
+        <div class="spacing-item">
+          <div class="spacing-bar" style="--space-val: 32px; width: 32px;"></div>
+          <span class="text-label">--space-8</span>
+          <span class="text-small text-muted">32px</span>
+        </div>
+        <div class="spacing-item">
+          <div class="spacing-bar" style="--space-val: 48px; width: 48px;"></div>
+          <span class="text-label">--space-12</span>
+          <span class="text-small text-muted">48px</span>
+        </div>
+        <div class="spacing-item">
+          <div class="spacing-bar" style="--space-val: 64px; width: 64px;"></div>
+          <span class="text-label">--space-16</span>
+          <span class="text-small text-muted">64px</span>
+        </div>
+        <div class="spacing-item">
+          <div class="spacing-bar" style="--space-val: 96px; width: 96px;"></div>
+          <span class="text-label">--space-24</span>
+          <span class="text-small text-muted">96px</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Buttons -->
+    <section class="section-block">
+      <h2 class="text-h2" style="margin-bottom: var(--space-4);">Buttons</h2>
+      <Divider />
+
+      <div class="button-grid">
+        <div class="button-row">
+          <div>
+            <span class="text-label text-muted" style="display: block; margin-bottom: var(--space-2);">Primary</span>
+            <Button variant="primary">Get Started</Button>
+            <p class="text-small text-muted" style="margin-top: var(--space-2);">Green fill, green focus ring</p>
+          </div>
+        </div>
+        <div class="button-row">
+          <div>
+            <span class="text-label text-muted" style="display: block; margin-bottom: var(--space-2);">Secondary</span>
+            <Button variant="secondary">Learn More</Button>
+            <p class="text-small text-muted" style="margin-top: var(--space-2);">Border, blue hover</p>
+          </div>
+        </div>
+        <div class="button-row">
+          <div>
+            <span class="text-label text-muted" style="display: block; margin-bottom: var(--space-2);">Ghost</span>
+            <Button variant="ghost">Contact</Button>
+            <p class="text-small text-muted" style="margin-top: var(--space-2);">Same as secondary</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Link -->
+    <section class="section-block">
+      <h2 class="text-h2" style="margin-bottom: var(--space-4);">Links</h2>
+      <Divider />
+
+      <div class="link-grid">
+        <div class="button-row">
+          <div>
+            <span class="text-label text-muted" style="display: block; margin-bottom: var(--space-2);">Default</span>
+            <Link href="#">Hover to see accent color and underline</Link>
+          </div>
+        </div>
+        <div class="button-row">
+          <div>
+            <span class="text-label text-muted" style="display: block; margin-bottom: var(--space-2);">With label</span>
+            <span class="text-body">
+              Read more at <Link href="#">99ways.io</Link> for details.
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Card -->
+    <section class="section-block">
+      <h2 class="text-h2" style="margin-bottom: var(--space-4);">Card</h2>
+      <Divider />
+
+      <p class="text-body text-muted" style="margin-bottom: var(--space-6);">
+        Flat, bordered, no shadow. Background matches parent section.
+      </p>
+
+      <div class="card-grid">
+        <div class="bg-default" style="padding: var(--space-6); border-radius: 4px;">
+          <span class="text-label text-muted" style="display: block; margin-bottom: var(--space-4);">On bg-default</span>
+          <Card style="--card-bg: var(--color-bg);">
+            <h3 class="text-h3" style="margin-bottom: var(--space-2);">Card title</h3>
+            <p class="text-body" style="margin-bottom: var(--space-2);">
+              Card content with a border and flat design.
+            </p>
+            <Link href="#">Read more</Link>
+          </Card>
+        </div>
+
+        <div class="bg-alt" style="padding: var(--space-6); border-radius: 4px;">
+          <span class="text-label text-muted" style="display: block; margin-bottom: var(--space-4);">On bg-alt</span>
+          <Card style="--card-bg: var(--color-bg-alt);">
+            <h3 class="text-h3" style="margin-bottom: var(--space-2);">Card title</h3>
+            <p class="text-body" style="margin-bottom: var(--space-2);">
+              Card content with a border and flat design.
+            </p>
+            <Link href="#">Read more</Link>
+          </Card>
+        </div>
+      </div>
+    </section>
+
+    <!-- Avatar -->
+    <section class="section-block">
+      <h2 class="text-h2" style="margin-bottom: var(--space-4);">Avatar</h2>
+      <Divider />
+
+      <p class="text-body text-muted" style="margin-bottom: var(--space-6);">
+        Circular crop. 96px mobile → 112px tablet → 128px desktop.
+      </p>
+
+      <div class="avatar-grid">
+        <div>
+          <Avatar src="https://i.pravatar.cc/128?img=1" alt="Founder 1" />
+          <p class="text-small text-muted" style="margin-top: var(--space-2);">96px</p>
+        </div>
+        <div>
+          <Avatar src="https://i.pravatar.cc/128?img=2" alt="Founder 2" />
+          <p class="text-small text-muted" style="margin-top: var(--space-2);">128px (desktop)</p>
+        </div>
+        <div>
+          <Avatar src="https://i.pravatar.cc/128?img=3" alt="Founder 3" />
+          <p class="text-small text-muted" style="margin-top: var(--space-2);">128px (desktop)</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Divider -->
+    <section class="section-block">
+      <h2 class="text-h2" style="margin-bottom: var(--space-4);">Divider</h2>
+      <Divider />
+
+      <p class="text-body" style="margin-bottom: var(--space-3);">
+        Before divider
+      </p>
+      <Divider />
+      <p class="text-body" style="margin-top: var(--space-3);">
+        After divider
+      </p>
+    </section>
+
+    <!-- Breakpoints -->
+    <section class="section-block">
+      <h2 class="text-h2" style="margin-bottom: var(--space-4);">Breakpoints</h2>
+      <Divider />
+
+      <div class="breakpoint-table">
+        <div class="breakpoint-row">
+          <span class="text-label">--bp-sm</span>
+          <span class="text-small">480px</span>
+          <span class="text-small text-muted">Small devices</span>
+        </div>
+        <div class="breakpoint-row">
+          <span class="text-label">--bp-md</span>
+          <span class="text-small">768px</span>
+          <span class="text-small text-muted">Tablet</span>
+        </div>
+        <div class="breakpoint-row">
+          <span class="text-label">--bp-lg</span>
+          <span class="text-small">1024px</span>
+          <span class="text-small text-muted">Desktop (type scale scale-up)</span>
+        </div>
+        <div class="breakpoint-row">
+          <span class="text-label">--bp-xl</span>
+          <span class="text-small">1280px</span>
+          <span class="text-small text-muted">Large desktop</span>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .styleguide {
+    padding-top: var(--space-8);
+  }
+
+  .styleguide > p {
+    margin-bottom: var(--space-8);
+  }
+
+  .section-block {
+    margin-bottom: var(--space-12);
+  }
+
+  .type-scale {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .type-row {
+    display: grid;
+    grid-template-columns: minmax(100px, 140px) 1fr;
+    align-items: start;
+    gap: var(--space-6);
+  }
+
+  .type-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding-top: 2px;
+  }
+
+  .type-name {
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  .type-size {
+    font-family: var(--font-body);
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .text-muted {
+    color: var(--color-text-muted);
+  }
+
+  /* Font cards */
+  .font-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .font-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .font-card {
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+  }
+
+  .font-card > .text-label {
+    font-weight: 500;
+  }
+
+  /* Color palette */
+  .color-palette {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .color-swatch {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .color-swatch-preview {
+    width: 100%;
+    aspect-ratio: 16/10;
+    border-radius: 4px;
+  }
+
+  .color-swatch > .text-label {
+    font-weight: 500;
+  }
+
+  .color-swatch > .text-small {
+    font-family: var(--font-body);
+    font-weight: 400;
+    line-height: 1.5;
+    word-break: break-all;
+  }
+
+  /* Bg pairing */
+  .bg-pairing-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+  }
+
+  .bg-pairing-cell {
+    padding: var(--space-4);
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+  }
+
+  .bg-pairing-cell > .text-label {
+    font-weight: 500;
+  }
+
+  /* Spacing */
+  .spacing-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .spacing-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .spacing-bar {
+    height: 16px;
+    background: var(--color-accent);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* Button grid */
+  .button-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .button-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  /* Link grid */
+  .link-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  /* Card grid */
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .card-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  /* Avatar grid */
+  .avatar-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+  }
+
+  .avatar-grid > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  /* Breakpoint table */
+  .breakpoint-table {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .breakpoint-row {
+    display: grid;
+    grid-template-columns: 120px 100px 1fr;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .breakpoint-row > :first-child {
+    font-weight: 500;
+  }
+</style>

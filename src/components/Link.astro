@@ -1,0 +1,32 @@
+---
+// Inline link component
+// Per design.md §5: color-text default, color-accent on hover/active,
+// no underline at rest, underline on hover
+---
+
+<a
+  class="link"
+  href={Astro.props.href}
+  target={Astro.props.target}
+  rel={Astro.props.rel}
+>
+  <slot />
+</a>
+
+<style>
+  .link {
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color 150ms ease;
+  }
+
+  .link:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+
+  .link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+</style>

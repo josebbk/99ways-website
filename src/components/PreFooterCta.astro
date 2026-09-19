@@ -1,0 +1,36 @@
+---
+// Pre-footer CTA — single centered column, primary button
+// Between Academy blog grid and footer
+// Per design.md §6 (bg-alt), §5 (primary button spec), HOMEPAGE_SPEC.md §7
+
+const ctaLink = '#';
+const ctaLabel = 'Book Intro Call';
+---
+
+<section class="prefooter bg-alt">
+  <div class="prefooter-container">
+    <a href={ctaLink} class="btn-primary">{ctaLabel}</a>
+  </div>
+</section>
+
+<style>
+  .prefooter {
+    padding-block: var(--space-8);
+  }
+
+  .prefooter-container {
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  @media (min-width: 1024px) {
+    .prefooter {
+      padding-block: var(--space-16);
+    }
+  }
+</style>

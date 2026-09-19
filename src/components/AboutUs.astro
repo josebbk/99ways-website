@@ -1,0 +1,174 @@
+---
+// About Us — two founder cards, side by side on desktop, stacked on mobile
+// Per design.md §6 (bg-alt), §5 (avatar: 96px mobile / 128px desktop, circular crop),
+// HOMEPAGE_SPEC.md §5
+
+import Divider from './Divider.astro';
+
+const founders = [
+  {
+    name: 'Iman Nazari',
+    role: 'Co-Founder — Strategy & Experimentation',
+    bio: 'Iman connects what most teams keep separate: technology, business, and human behavior. He is the strategic force behind 99Ways\' approach to conversion; translating user psychology, product reality, and commercial goals into decisions that actually improve performance. Where others guess at what customers want, Iman looks for signal: how people think, what drives action, and which changes measurably move results. He is relentless about clean measurement, sound inference, and experiments you can trust. For him, better decisions start with better evidence. Every metric must be credible, every insight must survive scrutiny, every test must produce learning; not noise. That is the foundation of 99Ways: reliable data, sharper understanding, and changes proven before they are scaled.',
+    photo: '/images/founders/iman-nazari.jpg',
+    photoAlt: 'Iman Nazari, Co-Founder — Strategy & Experimentation',
+  },
+  {
+    name: 'Moein Heshmati',
+    role: 'Co-Founder — Data Systems & Engineering',
+    bio: "Moein turns complexity into order. He's the architect behind 99Ways' tracking, reporting, and deployment systems; ensuring every insight is built on verified data and reproducible results. Where others chase creative flair, Moein builds structure: repeatable processes, documented workflows, and flawless implementation. He treats precision as a form of respect, for data, for the client, and for the truth. Nothing escapes his attention. Every number must reconcile, every change must be traceable, every system must work exactly as intended. That discipline is what allows 99Ways to move fast without breaking things.",
+    photo: '/images/founders/moein-heshmati.webp',
+    photoAlt: 'Moein Heshmati, Co-Founder — Data Systems & Engineering',
+  },
+];
+---
+
+<section class="about-section bg-alt">
+  <div class="about-container">
+    <h2 class="about-title">About Us</h2>
+    <div class="about-grid">
+      {founders.map((founder, i) => (
+        <div class="founder-card">
+          <div class="founder-card-content">
+            <img
+              src={founder.photo}
+              alt={founder.photoAlt}
+              width="128"
+              height="128"
+              loading="lazy"
+              class="founder-avatar"
+            />
+            <div class="founder-info">
+              <h3 class="founder-name">{founder.name}</h3>
+              <span class="founder-role">{founder.role}</span>
+              <p class="founder-bio">{founder.bio}</p>
+            </div>
+          </div>
+          {i < founders.length - 1 && <Divider vertical={true} />}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-section {
+    padding-block: var(--space-8);
+  }
+
+  .about-container {
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: var(--space-4);
+  }
+
+  .about-title {
+    font-family: var(--font-primary);
+    font-weight: 900;
+    font-variation-settings: "SOFT" 100;
+    font-size: var(--text-h2);
+    line-height: 1.2;
+    color: var(--color-text);
+    margin: 0 0 var(--space-8);
+  }
+
+  .about-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  .founder-card {
+    width: 100%;
+  }
+
+  .founder-card-content {
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+  }
+
+  .founder-avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .founder-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  .founder-name {
+    font-family: var(--font-primary);
+    font-weight: 900;
+    font-variation-settings: "SOFT" 100;
+    font-size: var(--text-h3);
+    line-height: 1.3;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .founder-role {
+    font-family: var(--font-brand);
+    font-weight: 500;
+    font-size: var(--text-label);
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+    color: var(--color-text-muted);
+  }
+
+  .founder-bio {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .about-section {
+      padding-block: var(--space-16);
+    }
+
+    .about-container {
+      padding-inline: var(--space-12);
+    }
+
+    .about-grid {
+      flex-direction: row;
+    }
+
+    .founder-card {
+      flex: 1;
+    }
+
+    .founder-avatar {
+      width: 128px;
+      height: 128px;
+    }
+
+    .founder-card hr.divider {
+      writing-mode: vertical-lr;
+      transform: rotate(180deg);
+      margin: 0 var(--space-8);
+      align-self: stretch;
+      height: auto;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .founder-card hr.divider {
+      border-bottom: 1px solid var(--color-border);
+      border-left: none;
+      width: 100%;
+      height: 1px;
+      margin: var(--space-6) 0;
+    }
+  }
+</style>

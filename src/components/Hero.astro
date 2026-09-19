@@ -1,0 +1,58 @@
+---
+// Hero — fully centered single column, text + CTA only
+// Per design.md §6 (bg-default), HOMEPAGE_SPEC.md §2
+
+const headline = 'Find and Pull Your Biggest Growth Levers with Experimentation';
+const subhead = 'We run your CRO operation, from research and prioritization to implementation and analysis.';
+---
+
+<section class="hero bg-default">
+  <div class="hero-container">
+    <h1 class="hero-headline">{headline}</h1>
+    <p class="hero-subhead">{subhead}</p>
+    <a href="#" class="btn-primary">Book Intro Call</a>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: var(--space-8);
+  }
+
+  .hero-container {
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .hero-headline {
+    font-family: var(--font-primary);
+    font-weight: 900;
+    font-variation-settings: "SOFT" 100;
+    font-size: var(--text-display);
+    line-height: 1.15;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .hero-subhead {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--color-text-muted);
+    max-width: 640px;
+    margin-top: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  @media (min-width: 1024px) {
+    .hero {
+      padding-block: var(--space-16);
+    }
+  }
+</style>

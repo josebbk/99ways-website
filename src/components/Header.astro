@@ -1,0 +1,355 @@
+---
+// Header — sticky, mobile-first responsive nav
+// Mobile (< 768px): compact mark + hamburger menu
+// Desktop (>= 768px): full wordmark + inline nav
+// Per design.md §4, HOMEPAGE_SPEC.md §1
+
+const navItems = [
+  {
+    label: 'Services',
+    type: 'dropdown',
+    children: [
+      { label: 'Conversion Rate Optimization', href: '/hire-cro-expert/' },
+      { label: 'PostHog & Product Analytics', href: '/hire-posthog-expert-guide/' },
+      { label: 'Hyros & Tracking Setup', href: '/hire-hyros-expert-guide/' },
+    ],
+  },
+  {
+    label: 'Resources',
+    type: 'dropdown',
+    children: [
+      { label: 'Guides and How-tos', href: '/category/guides-how-to/' },
+      { label: 'PostHog Feature Breakdowns', href: '/category/posthog-feature-breakdown/' },
+      { label: 'Tools Comparison', href: '/category/tools-comparison/' },
+      { label: 'Optimization Experiences', href: '/category/optimization-experience/', children: [
+        { label: 'Featured Experiments', href: '/category/optimization-experience/featured-experiments/' },
+      ]},
+    ],
+  },
+];
+
+const wordmarkSrc = '/assets/logo/wordmark/dark/99ways-wordmark-dark-background.svg';
+const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg';
+---
+
+<header class="header bg-default">
+  <div class="header-container">
+    <a href="/" class="header-logo" aria-label="99Ways home">
+      <img class="header-wordmark" src={wordmarkSrc} alt="99Ways" width="180" height="51" />
+      <img class="header-compact" src={compactSrc} alt="99Ways" width="64" height="44" />
+    </a>
+
+    <button class="header-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span class="hamburger"></span>
+      <span class="hamburger"></span>
+      <span class="hamburger"></span>
+    </button>
+
+    <nav class="header-nav" aria-label="Main navigation">
+      <ul class="nav-list">
+        {navItems.map(item => (
+          <li class="nav-item dropdown">
+            <button class="nav-link dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+              {item.label}
+              <svg class="dropdown-chevron" width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+                <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              {item.children.map(child => (
+                <li role="none">
+                  <a class="dropdown-link" href={child.href} role="menuitem">{child.label}</a>
+                  {child.children && (
+                    <ul class="dropdown-submenu" role="menu">
+                      {child.children.map(sub => (
+                        <li role="none">
+                          <a class="dropdown-submenu-link" href={sub.href} role="menuitem">{sub.label}</a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+      <a href="/contact-form/" class="btn-ghost header-cta">Contact Us</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+  }
+
+  .header-container {
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: var(--space-4);
+    display: flex;
+    align-items: center;
+    height: 72px;
+    gap: var(--space-6);
+  }
+
+  .header-logo {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .header-wordmark {
+    display: block;
+    width: 180px;
+    min-width: 180px;
+    height: auto;
+  }
+
+  .header-compact {
+    display: none;
+    width: 64px;
+    min-width: 64px;
+    height: auto;
+  }
+
+  .header-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--space-2);
+    margin-left: auto;
+  }
+
+  .hamburger {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background-color: var(--color-text);
+    border-radius: 1px;
+    transition: background-color 150ms ease;
+  }
+
+  .header-nav {
+    display: none;
+  }
+
+  /* Mobile nav when toggled open */
+  .header-nav.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 72px;
+    left: 0;
+    right: 0;
+    background-color: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--space-4) var(--space-4) var(--space-6);
+  }
+
+  .nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .nav-item {
+    position: relative;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-3) 0;
+    background: none;
+    border: none;
+    color: var(--color-text);
+    font-family: var(--font-brand);
+    font-weight: 500;
+    font-size: var(--text-label);
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 150ms ease;
+    width: 100%;
+  }
+
+  .nav-link:hover {
+    color: var(--color-accent);
+  }
+
+  .dropdown-chevron {
+    width: 10px;
+    height: 6px;
+    transition: transform 150ms ease;
+  }
+
+  .dropdown-toggle[aria-expanded="true"] .dropdown-chevron {
+    transform: rotate(180deg);
+  }
+
+  .dropdown-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: none;
+    flex-direction: column;
+    background-color: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    margin-top: var(--space-2);
+    padding: var(--space-2) 0;
+  }
+
+  .dropdown-toggle[aria-expanded="true"] + .dropdown-menu {
+    display: flex;
+  }
+
+  .dropdown-link,
+  .dropdown-submenu-link {
+    display: block;
+    padding: var(--space-2) var(--space-4);
+    color: var(--color-text);
+    font-family: var(--font-brand);
+    font-weight: 500;
+    font-size: var(--text-label);
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    transition: color 150ms ease;
+  }
+
+  .dropdown-link:hover,
+  .dropdown-submenu-link:hover {
+    color: var(--color-accent);
+  }
+
+  .dropdown-submenu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    padding-left: var(--space-4);
+  }
+
+  .header-cta {
+    margin-top: var(--space-4);
+  }
+
+  @media (min-width: 768px) {
+    .header-container {
+      padding-inline: var(--space-12);
+      height: 80px;
+    }
+
+    .header-toggle {
+      display: none;
+    }
+
+    .header-wordmark {
+      display: block;
+    }
+
+    .header-compact {
+      display: none;
+    }
+
+    .header-nav {
+      display: flex !important;
+      flex-direction: row;
+      align-items: center;
+      position: static;
+      background: none;
+      border: none;
+      padding: 0;
+      margin-left: auto;
+      gap: var(--space-6);
+    }
+
+    .nav-list {
+      flex-direction: row;
+      gap: var(--space-2);
+      align-items: center;
+    }
+
+    .nav-item {
+      position: relative;
+    }
+
+    .nav-link {
+      font-family: var(--font-brand);
+      font-weight: 500;
+      font-size: var(--text-label);
+      line-height: 1.4;
+      letter-spacing: 0.02em;
+      padding: var(--space-2) var(--space-3);
+      border-radius: 2px;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 0;
+      min-width: 240px;
+      z-index: 101;
+    }
+
+    .dropdown-toggle[aria-expanded="true"] + .dropdown-menu {
+      display: flex;
+    }
+
+    .dropdown-submenu {
+      padding-left: var(--space-4);
+    }
+
+    .header-cta {
+      margin-top: 0;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .header-wordmark {
+      display: none;
+    }
+
+    .header-compact {
+      display: block;
+    }
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector('.header-toggle');
+  const nav = document.querySelector('.header-nav');
+
+  toggle?.addEventListener('click', () => {
+    const isOpen = nav?.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(isOpen));
+  });
+
+  document.querySelectorAll('.dropdown-toggle').forEach(toggleBtn => {
+    toggleBtn.addEventListener('click', () => {
+      const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+      toggleBtn.setAttribute('aria-expanded', String(!isExpanded));
+    });
+  });
+
+  nav?.querySelectorAll('.dropdown-link').forEach(link => {
+    link.addEventListener('click', () => {
+      nav.classList.remove('open');
+      toggle?.setAttribute('aria-expanded', 'false');
+    });
+  });
+</script>

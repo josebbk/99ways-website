@@ -1,0 +1,358 @@
+/* ===================================================================
+   99WAYS — Design Tokens, Reset & Base Styles
+   All tokens and styles defined in docs/Design.md
+   =================================================================== */
+
+@import url('global-reset.css');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@24..96,900,100&family=IBM+Plex+Mono:ital,wght@0,500;0,600;1,500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;1,400&display=swap');
+
+/* -------------------------------------------------------------------
+   §1 & §3 — Color tokens, spacing scale, breakpoint tokens
+   ------------------------------------------------------------------- */
+:root {
+  /* Breakpoints */
+  --bp-sm: 480px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+
+  /* Colors */
+  --color-bg: #292B2A;
+  --color-bg-alt: #313330;
+  --color-text: #F4F3EF;
+  --color-text-muted: #B5B8B1;
+
+  /* Accent */
+  --color-accent: #A6BAFF;
+  --color-action: #6BD98D;
+
+  /* Structural */
+  --color-border: rgba(181, 184, 177, 0.24);
+  --color-border-strong: rgba(181, 184, 177, 0.4);
+}
+
+/* -------------------------------------------------------------------
+   §2 — Typography tokens
+   ------------------------------------------------------------------- */
+:root {
+  --font-primary: "Fraunces", Georgia, serif;
+  --font-body: "IBM Plex Sans", sans-serif;
+  --font-brand: "IBM Plex Mono", monospace;
+
+  /* Font sizes: mobile base → desktop values (CSS calc for rem+px fallback) */
+  --text-display: clamp(2rem, 4vw, 2.75rem);   /* 32px → 44px */
+  --text-h2: clamp(1.375rem, 2.5vw, 1.75rem);  /* 22px → 28px */
+  --text-h3: clamp(1.0625rem, 2vw, 1.25rem);   /* 17px → 20px */
+  --text-body: clamp(0.9375rem, 1.5vw, 1rem);  /* 15px → 16px */
+  --text-label: clamp(0.8125rem, 1.2vw, 0.875rem);  /* 13px → 14px */
+  --text-small: clamp(0.75rem, 1vw, 0.8125rem);  /* 12px → 13px */
+}
+
+/* -------------------------------------------------------------------
+   §5 — Global type scale classes (applied via CSS custom properties)
+   ------------------------------------------------------------------- */
+.text-display {
+  font-family: var(--font-primary);
+  font-weight: 900;
+  font-variation-settings: "SOFT" 100;
+  font-size: var(--text-display);
+  line-height: 1.15;
+}
+
+.text-h2 {
+  font-family: var(--font-primary);
+  font-weight: 900;
+  font-variation-settings: "SOFT" 100;
+  font-size: var(--text-h2);
+  line-height: 1.2;
+}
+
+.text-h3 {
+  font-family: var(--font-primary);
+  font-weight: 900;
+  font-variation-settings: "SOFT" 100;
+  font-size: var(--text-h3);
+  line-height: 1.3;
+}
+
+.text-body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--text-body);
+  line-height: 1.6;
+}
+
+.text-label {
+  font-family: var(--font-brand);
+  font-weight: 500;
+  font-size: var(--text-label);
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+}
+
+.text-small {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--text-small);
+  line-height: 1.5;
+}
+
+/* -------------------------------------------------------------------
+   Base body styles
+   ------------------------------------------------------------------- */
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: 1.6;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+/* -------------------------------------------------------------------
+   §5 — Inline link (default)
+   ------------------------------------------------------------------- */
+a,
+.link {
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+a:hover,
+a:focus-visible,
+.link:hover,
+.link:focus-visible {
+  color: var(--color-accent);
+}
+
+a:hover,
+.link:hover {
+  text-decoration: underline;
+}
+
+a:focus-visible,
+.link:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* -------------------------------------------------------------------
+   Headings
+   ------------------------------------------------------------------- */
+:where(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--font-primary);
+  font-weight: 900;
+  font-variation-settings: "SOFT" 100;
+  line-height: 1.2;
+}
+
+/* -------------------------------------------------------------------
+   Container (from §3 spacing rules)
+   ------------------------------------------------------------------- */
+.container {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+}
+
+/* -------------------------------------------------------------------
+   Section wrapper
+   ------------------------------------------------------------------- */
+.section {
+  padding-block: var(--space-8);
+}
+
+/* -------------------------------------------------------------------
+   §5 — Component: Button variants (scoped via .styleguide prefix)
+   ------------------------------------------------------------------- */
+
+/* Primary button */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 10px 24px;
+  font-family: var(--font-brand);
+  font-weight: 600;
+  font-size: var(--text-label);
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  color: var(--color-bg);
+  background-color: var(--color-action);
+  border: 2px solid var(--color-action);
+  border-radius: 4px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.btn-primary:hover {
+  background-color: color-mix(in srgb, var(--color-action) 90%, black);
+  border-color: color-mix(in srgb, var(--color-action) 90%, black);
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid var(--color-action);
+  outline-offset: 2px;
+}
+
+/* Secondary button */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 10px 24px;
+  font-family: var(--font-brand);
+  font-weight: 500;
+  font-size: var(--text-label);
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+  background-color: transparent;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 4px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 150ms ease, color 150ms ease;
+}
+
+.btn-secondary:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.btn-secondary:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Ghost button (same as secondary per design.md §5) */
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 10px 24px;
+  font-family: var(--font-brand);
+  font-weight: 500;
+  font-size: var(--text-label);
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+  background-color: transparent;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 4px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 150ms ease, color 150ms ease;
+}
+
+.btn-ghost:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.btn-ghost:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* -------------------------------------------------------------------
+   §5 — Card
+   ------------------------------------------------------------------- */
+.card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: var(--space-4);
+}
+
+/* -------------------------------------------------------------------
+   §5 — Avatar
+   ------------------------------------------------------------------- */
+.avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar img,
+.avatar picture {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* -------------------------------------------------------------------
+   §5 — Divider
+   ------------------------------------------------------------------- */
+.divider {
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* -------------------------------------------------------------------
+   §3 — Breakpoint queries (mobile-first)
+   ------------------------------------------------------------------- */
+@media (min-width: 480px) {
+  .avatar {
+    width: 96px;
+    height: 96px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding-inline: var(--space-6);
+  }
+
+  .section {
+    padding-block: var(--space-12);
+  }
+
+  .avatar {
+    width: 112px;
+    height: 112px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding-inline: var(--space-12);
+  }
+
+  .section {
+    padding-block: var(--space-16);
+  }
+
+  .avatar {
+    width: 128px;
+    height: 128px;
+  }
+}
+
+/* -------------------------------------------------------------------
+   Utility: Section backgrounds (§6 — Section backgrounds)
+   ------------------------------------------------------------------- */
+.bg-default {
+  background-color: var(--color-bg);
+}
+
+.bg-alt {
+  background-color: var(--color-bg-alt);
+}

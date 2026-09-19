@@ -1,0 +1,28 @@
+---
+// Avatar component — circular with responsive cap sizing
+// Per design.md §5: 96px mobile → 128px desktop
+---
+
+<div class="avatar" style="width: var(--avatar-size, 96px); height: var(--avatar-size, 96px)">
+  <img
+    src={Astro.props.src}
+    alt={Astro.props.alt}
+    width="128"
+    height="128"
+    loading="lazy"
+  />
+</div>
+
+<style>
+  .avatar {
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+</style>
