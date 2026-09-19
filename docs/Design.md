@@ -153,8 +153,8 @@ Tightened from the previous pass for a more compact, refined layout — still mo
 - 1px, `--color-border`.
 
 **Nav dropdown**
-- **Desktop:** opens on `mouseenter`, closes on `mouseleave` with a short delay (~150–200ms) to prevent flicker when the cursor moves from trigger to menu. Not click-triggered on desktop.
-- **Mobile/tablet:** click/tap-triggered, accordion behavior — opening one top-level dropdown closes any other open one. A nested item (e.g. "Featured Experiments" under "Optimization Experiences") reveals on tap of its parent, same accordion logic applies one level down.
+- **Desktop:** opens on `mouseenter`, closes on `mouseleave` with a short delay (~150–200ms) — but that delay only applies when the cursor is moving from the trigger toward that dropdown's own menu. Moving to a different top-level trigger while one is open closes it immediately, no delay. Top-level trigger labels ("Services", "Resources") are not links and don't show a `pointer` cursor; items inside the open dropdown are normal links with `pointer`. A right-facing arrow (`>`) marks "Optimization Experiences" as having a nested submenu — purely visual on desktop, reveal is still hover-driven.
+- **Mobile/tablet:** click/tap-triggered, accordion behavior — opening one top-level dropdown closes any other open one immediately. "Optimization Experiences" uses a down-facing arrow (▾) as a separate tap target from its text label: tapping the arrow toggles "Featured Experiments" open/closed, tapping the text navigates to the category page.
 
 ---
 
