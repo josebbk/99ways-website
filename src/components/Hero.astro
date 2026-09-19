@@ -1,12 +1,14 @@
 ---
 // Hero — fully centered single column, text + CTA only
-// Per design.md §6 (bg-default), HOMEPAGE_SPEC.md §2
+// Decorative Logo Field mounted behind content per design.md §5, HOMEPAGE_SPEC.md §2
+import DecorativeLogoField from './DecorativeLogoField.astro';
 
 const headline = 'Find and Pull Your Biggest Growth Levers with Experimentation';
 const subhead = 'We run your CRO operation, from research and prioritization to implementation and analysis.';
 ---
 
 <section class="hero bg-default">
+  <DecorativeLogoField />
   <div class="hero-container">
     <h1 class="hero-headline">{headline}</h1>
     <p class="hero-subhead">{subhead}</p>
@@ -17,6 +19,8 @@ const subhead = 'We run your CRO operation, from research and prioritization to 
 <style>
   .hero {
     padding-block: var(--space-8);
+    position: relative;
+    overflow: hidden;
   }
 
   .hero-container {
@@ -27,6 +31,8 @@ const subhead = 'We run your CRO operation, from research and prioritization to 
     flex-direction: column;
     align-items: center;
     text-align: center;
+    position: relative;
+    z-index: 1;
   }
 
   .hero-headline {
