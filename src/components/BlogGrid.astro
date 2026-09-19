@@ -26,7 +26,12 @@ const posts = allPosts
         </Card>
       ))}
     </div>
-    <a href="/academy/" class="blog-view-all">View all posts</a>
+    <a href="/academy/" class="blog-view-all">
+      <svg class="view-all-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path d="M5.25 2.75L9.75 7L5.25 11.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      View all posts
+    </a>
   </div>
 </section>
 
@@ -101,21 +106,35 @@ const posts = allPosts
   }
 
   .blog-view-all {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
     margin-top: var(--space-6);
     font-family: var(--font-brand);
     font-weight: 500;
     font-size: var(--text-label);
     line-height: 1.4;
     letter-spacing: 0.02em;
-    color: var(--color-accent);
+    color: var(--color-text-muted);
     text-decoration: none;
     transition: color 150ms ease;
   }
 
   .blog-view-all:hover {
-    color: var(--color-text);
-    text-decoration: underline;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .view-all-arrow {
+    display: inline-block;
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity 175ms ease, transform 175ms ease;
+  }
+
+  .blog-view-all:hover .view-all-arrow {
+    opacity: 1;
+    transform: translateX(0);
   }
 
   @media (min-width: 768px) {

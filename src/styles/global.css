@@ -40,6 +40,10 @@
   /* Structural */
   --color-border: rgba(181, 184, 177, 0.24);
   --color-border-strong: rgba(181, 184, 177, 0.4);
+
+  /* CTA text override (scoped to primary CTA button) */
+  --color-cta-text: #0F172A;
+  --color-cta-text-hover: #000000;
 }
 
 /* -------------------------------------------------------------------
@@ -189,18 +193,20 @@ a:focus-visible,
   font-size: var(--text-label);
   line-height: 1.4;
   letter-spacing: 0.02em;
-  color: var(--color-bg);
+  color: var(--color-cta-text);
   background-color: var(--color-action);
   border: 2px solid var(--color-action);
   border-radius: 4px;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 150ms ease, border-color 150ms ease;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
 }
 
 .btn-primary:hover {
   background-color: color-mix(in srgb, var(--color-action) 90%, black);
   border-color: color-mix(in srgb, var(--color-action) 90%, black);
+  color: var(--color-cta-text-hover);
+  text-decoration: none;
 }
 
 .btn-primary:focus-visible {
@@ -232,6 +238,7 @@ a:focus-visible,
 .btn-secondary:hover {
   border-color: var(--color-accent);
   color: var(--color-accent);
+  text-decoration: none;
 }
 
 .btn-secondary:focus-visible {
@@ -263,6 +270,7 @@ a:focus-visible,
 .btn-ghost:hover {
   border-color: var(--color-accent);
   color: var(--color-accent);
+  text-decoration: none;
 }
 
 .btn-ghost:focus-visible {

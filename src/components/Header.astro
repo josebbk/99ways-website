@@ -49,7 +49,7 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
       <ul class="nav-list">
         {navItems.map(item => (
           <li class="nav-item dropdown">
-            <button class="nav-link dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+            <button class="nav-link dropdown-toggle" aria-haspopup="true" aria-expanded="false" data-dropdown>
               {item.label}
               <svg class="dropdown-chevron" width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
                 <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -58,7 +58,7 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
             <ul class="dropdown-menu" role="menu">
               {item.children.map(child => (
                 <li role="none">
-                  <a class="dropdown-link" href={child.href} role="menuitem">{child.label}</a>
+                  <a class="dropdown-link" href={child.href} role="menuitem" data-submenu={child.children ? '' : undefined}>{child.label}</a>
                   {child.children && (
                     <ul class="dropdown-submenu" role="menu">
                       {child.children.map(sub => (
@@ -243,6 +243,10 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
     padding-left: var(--space-4);
   }
 
+  .dropdown-submenu.submenu-open {
+    display: flex;
+  }
+
   .header-cta {
     margin-top: var(--space-4);
   }
@@ -310,8 +314,13 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
       display: flex;
     }
 
+    /* Desktop: hide submenus by default, reveal on parent hover */
     .dropdown-submenu {
-      padding-left: var(--space-4);
+      display: none;
+    }
+
+    .dropdown-link:hover + .dropdown-submenu {
+      display: flex;
     }
 
     .header-cta {
@@ -339,14 +348,106 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
     toggle.setAttribute('aria-expanded', String(isOpen));
   });
 
-  document.querySelectorAll('.dropdown-toggle').forEach(toggleBtn => {
+  // Mobile/tablet: accordion behavior — click toggles, one open at a time
+  document.querySelectorAll('.dropdown-toggle[data-dropdown]').forEach(toggleBtn => {
     toggleBtn.addEventListener('click', () => {
       const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+
+      // Close all other dropdowns (accordion)
+      document.querySelectorAll('.dropdown-toggle[data-dropdown]').forEach(other => {
+        if (other !== toggleBtn) {
+          other.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      // Toggle current
       toggleBtn.setAttribute('aria-expanded', String(!isExpanded));
+
+      // On mobile: toggle the first-level nested submenu via class
+      const menu = toggleBtn.nextElementSibling;
+      if (menu?.classList.contains('dropdown-menu')) {
+        const firstChild = menu.querySelector(':scope > li > .dropdown-link[data-submenu]');
+        if (firstChild) {
+          const submenu = firstChild.nextElementSibling;
+          if (submenu?.classList.contains('dropdown-submenu')) {
+            submenu.classList.toggle('submenu-open');
+          }
+        }
+      }
     });
   });
 
-  nav?.querySelectorAll('.dropdown-link').forEach(link => {
+  // Mobile/tablet: nested submenu toggle (accordion within accordion)
+  document.querySelectorAll('.dropdown-link[data-submenu]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const submenu = link.nextElementSibling;
+      if (submenu?.classList.contains('dropdown-submenu')) {
+        submenu.classList.toggle('submenu-open');
+      }
+    });
+  });
+
+  // Desktop (>= 768px): hover-triggered dropdowns with close delay
+  const isMobile = () => window.matchMedia('(max-width: 767px)').matches;
+
+  document.querySelectorAll('.dropdown-toggle[data-dropdown]').forEach(toggleBtn => {
+    const menu = toggleBtn.nextElementSibling;
+    if (!menu?.classList.contains('dropdown-menu')) return;
+    // Only attach desktop hover handlers on desktop
+    if (isMobile()) return;
+
+    let closeTimer = null;
+
+    function showMenu() {
+      clearTimeout(closeTimer);
+      closeTimer = null;
+      menu.style.display = 'flex';
+    }
+
+    function scheduleClose() {
+      clearTimeout(closeTimer);
+      closeTimer = setTimeout(() => {
+        menu.style.display = 'none';
+        closeTimer = null;
+      }, 175);
+    }
+
+    toggleBtn.addEventListener('mouseenter', showMenu);
+    toggleBtn.addEventListener('mouseleave', scheduleClose);
+    menu.addEventListener('mouseenter', showMenu);
+    menu.addEventListener('mouseleave', scheduleClose);
+  });
+
+  // Desktop: "Optimization Experiences" nested submenu hover reveal
+  document.querySelectorAll('.dropdown-link[data-submenu]').forEach(parentLink => {
+    const submenu = parentLink.nextElementSibling;
+    if (!submenu?.classList.contains('dropdown-submenu')) return;
+    if (isMobile()) return;
+
+    let closeTimer = null;
+
+    function showSubmenu() {
+      clearTimeout(closeTimer);
+      submenu.style.display = 'flex';
+    }
+
+    function scheduleClose() {
+      clearTimeout(closeTimer);
+      closeTimer = setTimeout(() => {
+        submenu.style.display = 'none';
+        closeTimer = null;
+      }, 175);
+    }
+
+    parentLink.addEventListener('mouseenter', showSubmenu);
+    parentLink.addEventListener('mouseleave', scheduleClose);
+    submenu.addEventListener('mouseenter', showSubmenu);
+    submenu.addEventListener('mouseleave', scheduleClose);
+  });
+
+  // Close mobile nav when clicking a dropdown link (not the submenu toggle)
+  nav?.querySelectorAll('.dropdown-link:not([data-submenu])').forEach(link => {
     link.addEventListener('click', () => {
       nav.classList.remove('open');
       toggle?.setAttribute('aria-expanded', 'false');
