@@ -114,6 +114,7 @@ Tightened from the previous pass for a more compact, refined layout — still mo
 - **Never:** retype the wordmark as live text, alter letter spacing, move the two pupils independently, recolor with green, stretch/distort proportions, isolate a single "9," or place on a busy/low-contrast field without a neutral holding area.
 - **Favicon:** `icons/favicon/99ways-favicon.svg` (built-in light/dark variants, use as-is).
 - The logo's own font (IBM Plex Mono) now doubles as `--font-brand` for CTA labels — that's the "specific brand highlight" use case, not a coincidence; it's the intended way to echo the logo's type without using it for the wordmark itself.
+- **Exception — Decorative Logo Field (see §5):** the atmospheric background pattern defined in §5 is a deliberate, scoped exception to this section — it intentionally goes below the 64px minimum-width floor and intentionally scatters many isolated/repeated copies of the mark across a busy field with no neutral holding area, because its purpose is decorative texture, not brand identification. This exception applies **only** to that component. It does not relax any rule above for the header, footer, favicon, or any other functional logo placement, and it must never be used as precedent for shrinking, isolating, or duplicating the logo anywhere else on the site.
 
 ---
 
@@ -156,6 +157,21 @@ Tightened from the previous pass for a more compact, refined layout — still mo
 - **Desktop:** trigger label and its dropdown menu are one combined hover region — opens on `mouseenter` of that region, closes **immediately** on `mouseleave` of it, no delay/timer (a prior delay-based approach proved unreliable and has been dropped). Top-level trigger labels ("Services", "Resources") are not links and don't show a `pointer` cursor; items inside the open dropdown are normal links with `pointer`. A right-facing arrow (`>`) marks "Optimization Experiences" as having a nested submenu — same font/color as the row's text, right-aligned via flex (`justify-content: space-between`), purely visual on desktop, reveal is still hover-driven.
 - **Mobile/tablet:** click/tap-triggered, accordion behavior — opening one top-level dropdown closes any other open one immediately, revealing only that trigger's direct children. "Optimization Experiences" uses a down-facing arrow (▾) as a genuinely separate DOM element/click-handler from its text label (each calling `stopPropagation()`): tapping the arrow toggles "Featured Experiments" via its own dedicated state, tapping the text navigates — neither should be derived from or coupled to "Resources"' own open state.
 
+**Decorative Logo Field (new — reusable)**
+- **Purpose:** an atmospheric, non-brand-functional background texture built from many small repeated instances of the compact/micro logo mark. Adds visual interest to an otherwise flat dark section without becoming a content element itself. This is decoration, not a logo lockup — see the scoped exception in §4.
+- **Asset:** `assets/icons/micro/99ways-compact-micro-32px-dark-background-2x.png` only. Do not use the full compact master or the wordmark for this — the micro asset is the sole source image, scaled up/down and re-styled via CSS (opacity, rotation) as needed.
+- **Implementation shape:** a generic component (e.g. `DecorativeLogoField`) that renders N positioned `<img>`/background instances absolutely inside a `position: relative` wrapper spanning the host section — not a single rasterized/flattened background image. This keeps every instance's position, size, rotation, and opacity independently adjustable in code and per breakpoint.
+- **Protected zone:** the host section defines a content-safe rectangle (sized to its actual foreground content's rendered bounding box, plus a clearance buffer — derived: `--space-8` mobile, `--space-12` desktop) that no decorative instance may enter, even partially, at any breakpoint. The zone is recalculated per breakpoint against the content's actual rendered size, not hardcoded coordinates.
+- **Distribution:** concentrated in the outer/side/corner regions outside the protected zone. Organic, non-grid placement — use a fixed set of hand-tuned or seeded-random position/size/rotation/opacity values per breakpoint tier, not a repeating tile or evenly-spaced pattern. Avoid visually obvious repetition (don't reuse the identical size+rotation+opacity combination more than once or twice in the same viewport).
+- **Size range (derived, matches the agreed visual reference):** roughly 24–32px on the small end up to 120–180px on the large end, mixed within the same field. Expose as a configurable min/max, not fixed per-instance values baked into markup.
+- **Rotation range (derived):** roughly ±15–25°, per instance.
+- **Opacity range (derived):** faint — most instances ~4–12%, with a few of the largest/most-background instances allowed up to ~15–18%. No instance should ever read as more visually prominent than the section's own `--color-border` hairlines or muted text; if in doubt, go fainter.
+- **Edge bleed:** instances may sit partially outside the host section's visible bounds. The host section must use `overflow: hidden` so bled instances never introduce page-level horizontal or vertical scroll, on any breakpoint.
+- **Static — no exceptions:** no animation, transition, parallax, drift, float, spin, or hover/interaction state of any kind on decorative instances, on any breakpoint. Pure static `position` + `transform: rotate()` + `opacity`.
+- **Responsive density (derived starting counts — tune by eye, not a hard requirement):** ~8–12 instances on mobile, ~16–20 on tablet, ~24–30 on desktop. Prefer reducing *count* over shrinking *size* on smaller breakpoints, so the scatter still reads as organic rather than a miniaturized, denser-looking version of desktop.
+- **Configurability:** density, size range, opacity range, rotation range, and the protected-zone buffer must each be adjustable from one place (component props or a config object / CSS custom properties) — not scattered as inline per-instance styles through markup — so density/subtlety can be retuned later without touching layout logic.
+- **Reuse:** built generically enough that other sections can mount their own instance later by passing their own protected-zone bounds and density config. Only the Hero uses it in this pass — see `HOMEPAGE_SPEC.md` §2.
+
 ---
 
 ## 6. Section backgrounds
@@ -181,3 +197,4 @@ This replaces the earlier "flat background everywhere, hairlines only" rule — 
 
 - Interactions: opacity/transform transitions only, 150–200ms ease, no bounce/spring easing.
 - Logo pupil motion remains future work, not part of this release.
+- The Decorative Logo Field (§5) is explicitly excluded from this section — its instances are static and never transition, regardless of viewport or interaction state.
