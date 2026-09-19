@@ -115,7 +115,7 @@ Asset paths reference `ASSET_MANIFEST.md`.
 **Background:** `--color-bg-alt`.
 
 - Section title: **"About Us"** (`--text-h2`).
-- **Layout:** two-column founder cards side by side (desktop), stacked (mobile). Divider between them: 1px `--color-border`, vertical on desktop. **Corrected: hidden entirely on mobile/tablet — this replaces the earlier "horizontal on mobile" version of this rule, which is no longer correct.**
+- **Layout:** two-column founder cards side by side (desktop), stacked (mobile). Divider between them: **hidden on mobile breakpoint; rendered as a vertical 1px `--color-border` line on tablet and desktop breakpoints.** The mobile/tablet split for this rule is at `--bp-md` (768px), matching the breakpoint tokens in `design.md`: below `--bp-md` = mobile (no divider), `--bp-md` and above = tablet+desktop (vertical divider). Note: a vertical divider only reads correctly if the two cards are already side-by-side at that width — if the tablet breakpoint currently still stacks the cards, the card layout (not just the divider) needs to switch to side-by-side starting at `--bp-md` too. Don't change anything else about the mobile layout for this section.
 - **Photos: small and identity-scale, not hero-scale.** Cap per `design.md` §5 — 96px mobile / 128px desktop, circular crop. The previous pass ran these too large for a compact layout; keep them proportionate to the name/role text next to them, not a dominant visual element.
 
 **Card 1**
