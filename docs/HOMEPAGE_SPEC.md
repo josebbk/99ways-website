@@ -57,7 +57,15 @@ Asset paths reference `ASSET_MANIFEST.md`.
 
 **Layout: fully centered.** Headline, subhead, and CTA are all center-aligned as a single centered column (this replaces any left-aligned/split layout from the previous pass — with the mascot gone, there's no asymmetric visual to balance against).
 
-- No mascot/illustration and no replacement graphic in this pass — center column is text + CTA only. **Decided: ship text-only for this round; the hero visual is a fast-follow, not a blocker.** Revisit once the site is live if it feels too bare on wide desktop viewports.
+- **Decorative logo background field — new, resolves the earlier "hero visual" deferral in `ASSET_MANIFEST.md` §5.** The hero gets an atmospheric background texture made of many small, faint, repeated instances of the 99ways logo mark, positioned behind the centered text/CTA column. This is a background texture, not a hero illustration or mascot replacement — it sits *behind* the existing centered layout and does not change that layout, the copy, or the CTA.
+  - Full component spec (sizing/rotation/opacity ranges, protected-zone rules, responsive density, static-only requirement, configurability) lives in `design.md` §5, **Decorative Logo Field**. This entry only states how that component applies specifically to the Hero.
+  - **Asset:** `assets/icons/micro/99ways-compact-micro-32px-dark-background-2x.png` only (see `ASSET_MANIFEST.md` §1). Never the wordmark or the full compact master.
+  - **Protected zone:** the centered headline + subhead (including its ~640px max-width constraint) + CTA column, plus the clearance buffer defined in `design.md` §5, must stay completely free of decorative logo instances at every breakpoint. No instance may render — even partially — inside this zone.
+  - **Placement:** instances concentrate in the outer/side/corner regions of the hero, around and outside the protected zone, scattered organically (mixed size, rotation, opacity per the ranges in `design.md` §5). Some instances may bleed past the hero's own edges; the hero section needs `overflow: hidden` so bled instances never cause page-level scroll on any breakpoint.
+  - **Static only:** no animation, parallax, drift, float, spin, or hover motion on these logos, ever, on any breakpoint — see `design.md` §7.
+  - **Responsive:** instance count/density reduces on tablet and mobile per the starting counts in `design.md` §5; the protected zone is recalculated per breakpoint against the centered column's actual rendered size at that breakpoint, not fixed coordinates copied from a desktop mockup.
+  - **Binding-rule exception:** this use intentionally goes below `design.md` §4's logo minimum-size floor and intentionally scatters/repeats/isolates the mark — that is a scoped, documented exception (see `design.md` §4) that applies only to this component, not to any other logo usage on the site.
+  - A generated visual reference exists for this feature showing the intended overall look (scattered faint marks, dense at the edges, clear in the center). It is a design reference only — it is not an asset, is not embedded anywhere, and its exact pixel positions are not to be reproduced; the actual implementation must be responsive per the rules above, not a fixed reproduction of that image.
 - Headline (`--text-display`, `--color-text`, centered):
   > Find and Pull Your Biggest Growth Levers with Experimentation
 - Subhead (`--text-body`, `--color-text-muted`, centered, max-width ~640px so it doesn't stretch full-width on desktop):
@@ -241,3 +249,4 @@ Asset paths reference `ASSET_MANIFEST.md`.
 - Pupil hover/motion animation on the logo (documented as future work in `logo-specification.md`, not part of v1.0).
 - Light theme / theme toggle.
 - Google Maps embed (footer) — removed per updated direction (§8). Only revisit if explicitly requested.
+- Any animation/motion on the Hero's Decorative Logo Field (§2) — static only, see `design.md` §5 and §7.
