@@ -139,10 +139,12 @@ Tightened from the previous pass for a more compact, refined layout — still mo
 - Background matches its parent section (`--color-bg` or `--color-bg-alt`, whichever the section is on), 1px `--color-border`, padding `--space-4`, no drop shadows.
 
 **Carousel (testimonials — new)**
-- 3 cards visible: center card at 100% opacity / 100% scale (focal), left and right cards at reduced opacity (derived: ~50%) and reduced scale (derived: ~85–90%).
-- Base card shell follows the Card rules above; the opacity/scale treatment layers on top, driven by position (center vs. side), not a separate card variant.
+- 3 cards visible: center card at 100% opacity / 100% scale (focal), left and right cards at reduced opacity (~0.5–0.7) and reduced scale (derived: ~85–90%).
+- **Card framing is a deliberate exception to the base Card component above:** no internal padding — image fills the card edge-to-edge, border hugs the image directly. Baseline container size: 385.75px × 140.83px (~2.74:1), derived from image #4.
+- **Cropping:** zero horizontal cropping, ever — every image renders at full container width. Vertical overflow only is cropped, top-down (`object-position: top`). See `HOMEPAGE_SPEC.md` §4 for the full corrected rule and why a bare `object-fit: cover` isn't sufficient on its own.
 - Transitions: directional horizontal slide, per §7 Motion timing (150–200ms — may need to run slightly longer for a slide of this distance; use judgment, keep it snappy, not floaty).
-- Same carousel — same depth/scale treatment — on mobile and desktop. Don't swap to a flat filmstrip on small screens; adjust card sizing instead so 3-across still fits.
+- Same carousel — same depth/scale treatment — on mobile and desktop. Don't swap to a flat filmstrip on small screens; adjust card sizing instead so 3-across still fits. Outer section container uses `overflow-x: hidden`; carousel must stay within `100vw` on all breakpoints, no page-level horizontal scroll.
+- Lightbox dismissal: backdrop click, close button, and `Esc` key must all work.
 
 **Avatar/photo (About Us and similar)**
 - Cap size: 96px mobile → 128px desktop, circular crop. Deliberately small — the previous pass ran oversized imagery here; keep founder photos as identity markers, not hero-scale visuals.
