@@ -12,6 +12,7 @@ Paths below are relative to the `assets/` directory in the new Astro project rep
 | Compact mark (dark theme) | `assets/logo/compact/dark/99ways-compact-dark-background.svg` | 146 × 101 viewBox. Min render width 64px. |
 | Favicon | `assets/icons/favicon/99ways-favicon.svg` | Has built-in light/dark `prefers-color-scheme` variants — use directly, don't fork per-theme. |
 | Apple touch icon | `assets/icons/apple-touch/99ways-apple-touch-icon-180.png` | 180×180, opaque Warm White field — use as-is for `<link rel="apple-touch-icon">`. |
+| Hero decorative background mark (dark theme, micro) | `assets/icons/micro/99ways-compact-micro-32px-dark-background-2x.png` | Used **only** by the Decorative Logo Field component (`design.md` §5, applied to the Hero per `HOMEPAGE_SPEC.md` §2). Not a functional logo lockup — do not use for header/footer/nav/favicon. Single source raster, restyled per-instance via CSS (scale/rotate/opacity); do not re-export additional sizes for this. |
 
 ## 2. Available in the repo but not currently used in this spec
 
@@ -19,7 +20,7 @@ Listed for completeness — pull if a later section needs them (e.g. social shar
 
 - `raster/wordmark/` and `raster/compact/` — PNG fallbacks (1024w/2048w, 512/1024 square) if SVG isn't viable in some render context.
 - `social/avatar/99ways-avatar-warm-white-1024.png` — square profile avatar, not a homepage element.
-- `icons/micro/*` — 16/24/32/48px optical derivatives, for favicon-scale contexts smaller than the compact mark's 64px floor.
+- `icons/micro/*` — 16/24/32/48px optical derivatives, for favicon-scale contexts smaller than the compact mark's 64px floor. (The 32px/2x variant is now used specifically for the Hero's Decorative Logo Field — see §1 above; the other sizes in this set remain unused in this spec.)
 - `masters/` — editable source SVGs. **Do not ship these to production** — they're for design edits only.
 
 ## 3. Assets NOT in the brand repo — need sourcing before build
@@ -65,5 +66,5 @@ These are content images from the current live WordPress site's media library, n
 
 ## 5. Open items requiring a human decision before final build
 
-- Hero visual (Section 2) — deliberately deferred, ship text-only this round. Revisit post-launch as a fast-follow if wanted.
+- **Hero visual — resolved.** The earlier "ship text-only, hero visual is a fast-follow" deferral is superseded: the Hero now specs a Decorative Logo Field background texture (see `design.md` §5, `HOMEPAGE_SPEC.md` §2), using the confirmed asset in §1 above. No longer an open item.
 - "Book Intro Call" destination URL — deliberately deferred, ship as placeholder this round (used in both the hero and pre-footer CTA). Wire up once a booking tool is set up.
