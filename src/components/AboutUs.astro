@@ -1,6 +1,7 @@
 ---
-// About Us — two founder cards, side by side on desktop, stacked on mobile
-// Per design.md §6 (bg-alt), §5 (avatar: 96px mobile / 128px desktop, circular crop),
+// About Us — two founder cards, stacked on mobile, side by side from 768px+
+// with vertical divider. Divider hidden below 768px.
+// Per design.md §6 (bg-alt), §5 (avatar: 96px mobile / 128px 768px+),
 // HOMEPAGE_SPEC.md §5
 
 import Divider from './Divider.astro';
@@ -131,17 +132,22 @@ const founders = [
     margin: 0;
   }
 
-  @media (min-width: 1024px) {
+  .founder-card hr.divider {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
     .about-section {
-      padding-block: var(--space-16);
+      padding-block: var(--space-8);
     }
 
     .about-container {
-      padding-inline: var(--space-12);
+      padding-inline: var(--space-8);
     }
 
     .about-grid {
       flex-direction: row;
+      gap: 0;
     }
 
     .founder-card {
@@ -154,21 +160,23 @@ const founders = [
     }
 
     .founder-card hr.divider {
-      writing-mode: vertical-lr;
-      transform: rotate(180deg);
+      display: block;
+      border: none;
+      border-left: 1px solid var(--color-border);
+      width: 1px;
       margin: 0 var(--space-8);
       align-self: stretch;
       height: auto;
     }
   }
 
-  @media (max-width: 767px) {
-    .founder-card hr.divider {
-      border-bottom: 1px solid var(--color-border);
-      border-left: none;
-      width: 100%;
-      height: 1px;
-      margin: var(--space-6) 0;
+  @media (min-width: 1024px) {
+    .about-section {
+      padding-block: var(--space-16);
+    }
+
+    .about-container {
+      padding-inline: var(--space-12);
     }
   }
 </style>
