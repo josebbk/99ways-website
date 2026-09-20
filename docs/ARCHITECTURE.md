@@ -137,9 +137,9 @@ Fraunces is a display face — used for headings/titles only, never body text (h
 **Card — blog grid**
 - Background matches parent section (`--color-bg` or `--color-bg-alt`), 1px `--color-border`, padding `--space-4`, no drop shadows.
 
-**Masonry — testimonials** (section was previously a 3D carousel — replaced for mobile breakage where the carousel caused horizontal page scroll on mobile viewports; the replacement is a static CSS multi-column masonry wall with no interaction). Section-level properties (background `--color-bg`, title "How Partners Review Us" with `--text-h2`, fonts, spacing, container width) are unchanged from the prior version and governed by §3/§5/§8.
+**Masonry — testimonials** (section was previously a 3D carousel — replaced for mobile breakage where the carousel caused horizontal page scroll on mobile viewports; the replacement is a CSS multi-column masonry wall with scoped interactivity layered on top at tablet/desktop breakpoints. Section-level properties (background `--color-bg`, title "How Partners Review Us" with `--text-h2`, fonts, spacing, container width) are unchanged from the prior version and governed by §3/§5/§8).
 
-- 9 images rendered as a static masonry grid using CSS multi-column layout. No auto-rotation, no lightbox, no hover/peek/scale states, no lightbox.
+- 9 images rendered as a masonry grid using CSS multi-column layout. No auto-rotation.
 - **Column counts:** 3 columns desktop (≥900px), 2 columns tablet (560–899px), 1 column mobile (<560px). `column-gap: 14px`.
 - **break-inside: avoid** on each tile to prevent image splitting across columns.
 - **Per-image aspect-ratio** via CSS class matching each image's actual native dimensions (measured from source files):
@@ -156,7 +156,18 @@ Fraunces is a display face — used for headings/titles only, never body text (h
   | `.r-9` | 794 | 328 | `09-saas-posthog-setup.webp` |
 - **object-fit: cover** on images as a safety net if a delivered image doesn't exactly match its declared ratio.
 - Images sourced via `astro:assets` `<Image />` with `loading="lazy"`.
-- Component: `TestimonialsMasonry.astro` — imports from `src/assets/testimonials/`, no client-side JavaScript.
+- Component: `TestimonialsMasonry.astro`.
+
+**Dashed border style (all breakpoints):** Each `.review-tile img` has:
+- `border: 3px dashed var(--color-accent);` — color renders as `#A6BAFF` (Inverse Inquiry Blue)
+- `border-radius: 10px;`
+- `box-shadow: 5px 5px 10px 0 rgba(0,0,0,0.25);`
+- These apply at all breakpoints including mobile (<560px). Purely decorative/styling; no interaction implied.
+
+**Hover animation (≥560px only):** At viewport widths ≥560px, images receive a `transition: opacity 175ms ease, transform 175ms ease` with `opacity: 0.9` and `transform: scale(1.01)` on hover. Below 560px: no hover transition is active. This follows the 150–200ms ease motion rules in §6.
+
+**Lightbox overlay (≥560px only):** At viewport widths ≥560px, clicking any review-tile opens the image centered in a full-viewport dimmed backdrop (`background: rgba(0,0,0,0.75)`), scaled to the image's own resolution/aspect ratio. Clicking anywhere on the backdrop (outside the image) or pressing Escape closes the overlay. Below 560px: no click handler is attached, no lightbox markup is interactive, and the view remains functionally identical to the pre-interactivity baseline. This is a scoped exception: interactivity exists only at ≥560px.
+
 - **Historical note:** This section previously used a 3D carousel (`TestimonialsCarousel.astro`, now deleted) with auto-rotation (~5s), peek/scale states for side cards (~0.5–0.7 opacity, ~85–90% scale), and a full-screen lightbox. The carousel caused horizontal page-level scroll on mobile (375px–414px viewports). The masonry replacement resolves this while preserving the identical section wrapper (background, title, fonts, spacing, container width).
 
 **Avatar/photo — About Us and similar**

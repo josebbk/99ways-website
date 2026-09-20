@@ -48,8 +48,63 @@ const reviews: Review[] = [
         </article>
       ))}
     </div>
+
+    <div class="tl-backdrop" role="dialog" aria-hidden="true">
+      <img src="" alt="" />
+    </div>
   </div>
 </section>
+
+<script>
+  const mq = window.matchMedia('(min-width: 560px)');
+  if (!mq.matches) { /* no client-side behavior below 560px */ }
+
+  function handleMediaRefresh() {
+    if (!mq.matches) return;
+    const backdrop = document.querySelector('.tl-backdrop');
+    if (!backdrop) return;
+    const backdropImg = backdrop.querySelector('img');
+    if (!backdropImg) return;
+
+    // Open lightbox on any review-tile click
+    function openLightbox(e) {
+      const tile = e.target.closest('.review-tile');
+      if (!tile) return;
+      const img = tile.querySelector('img');
+      if (!img) return;
+      backdropImg.src = img.src;
+      backdropImg.alt = img.alt;
+      backdrop.classList.add('tl-open');
+      backdrop.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('tl-overflow-hidden');
+    }
+
+    // Close on any click on the backdrop (outside the image)
+    function closeLightbox(e) {
+      if (e.target === backdrop || e.target === backdropImg) {
+        backdrop.classList.remove('tl-open');
+        backdrop.setAttribute('aria-hidden', 'true');
+        backdropImg.src = '';
+        backdropImg.alt = '';
+        document.body.classList.remove('tl-overflow-hidden');
+      }
+    }
+
+    document.querySelector('.review-grid')?.addEventListener('click', openLightbox);
+    backdrop.addEventListener('click', closeLightbox);
+
+    // Close on Escape
+    function closeOnEscape(e) {
+      if (e.key === 'Escape' && backdrop.classList.contains('tl-open')) {
+        closeLightbox(e);
+      }
+    }
+    document.addEventListener('keydown', closeOnEscape);
+  }
+
+  handleMediaRefresh();
+  mq.addEventListener?.('change', handleMediaRefresh);
+</script>
 
 <style>
   /* ── Section wrapper (byte-identical to original TestimonialsCarousel.astro) ── */
@@ -75,9 +130,53 @@ const reviews: Review[] = [
     width: 100%;
     height: auto;
     object-fit: cover;
+    border: 3px dashed var(--color-accent);
+    border-radius: 10px;
+    box-shadow: 5px 5px 10px 0 rgba(0,0,0,0.25);
   }
 
-  /* Per-image aspect-ratio classes — actual measured pixel dimensions */
+  /* Hover animation — only at ≥560px (tablet/desktop) */
+  @media (min-width: 560px) {
+    .review-tile img {
+      transition: opacity 175ms ease, transform 175ms ease;
+    }
+    .review-tile img:hover {
+      opacity: 0.9;
+      transform: scale(1.01);
+    }
+  }
+
+  /* ── Lightbox (≥560px only) ── */
+  .tl-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 175ms ease;
+  }
+  .tl-backdrop.tl-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .tl-backdrop img {
+    max-width: 90vw;
+    max-height: 90vh;
+    width: auto;
+    height: auto;
+    display: block;
+    border-radius: 10px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
+  }
+  body.tl-overflow-hidden {
+    overflow: hidden;
+  }
+
+  /* ── Per-image aspect-ratio classes — actual measured pixel dimensions ── */
   .r-1 { aspect-ratio: 796 / 226; }
   .r-2 { aspect-ratio: 686 / 221; }
   .r-3 { aspect-ratio: 794 / 198; }
