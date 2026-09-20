@@ -105,17 +105,21 @@ function socialIcon(type) {
         </a>
       ))}
     </div>
+  </div>
 
-    <p class="footer-legal">
-      <em>Ninety Nine Ways</em> is a registered trademark of Nazari Ecom Solutions. Nazari Ecom Solutions is registered with the Dutch Chamber of Commerce (KvK) under registration number 91552451. Office: Mr. Treublaan 7, 1097 DP Amsterdam, The Netherlands. VAT Identification Number: NL004899587B87.
-    </p>
+  <div class="footer-sub">
+    <div class="footer-sub-inner">
+      <p class="footer-legal">
+        <em>Ninety Nine Ways</em> is a registered trademark of Nazari Ecom Solutions. Nazari Ecom Solutions is registered with the Dutch Chamber of Commerce (KvK) under registration number 91552451. Office: Mr. Treublaan 7, 1097 DP Amsterdam, The Netherlands. VAT Identification Number: NL004899587B87.
+      </p>
 
-    <p class="footer-copyright">
-      2025 99Ways | All right reserved.
-      <a href="/privacy-policy/" class="footer-legal-link">Privacy Policy</a>
-      <span class="footer-divider">|</span>
-      <a href="/terms-of-use/" class="footer-legal-link">Terms of Service</a>
-    </p>
+      <p class="footer-copyright">
+        2025 99Ways | All right reserved.
+        <a href="/privacy-policy/" class="footer-legal-link">Privacy Policy</a>
+        <span class="footer-divider">|</span>
+        <a href="/terms-of-use/" class="footer-legal-link">Terms of Service</a>
+      </p>
+    </div>
   </div>
 </footer>
 
@@ -253,6 +257,18 @@ function socialIcon(type) {
 
   .footer-divider {
     color: var(--color-text-muted);
+  }
+
+  .footer-sub {
+    background-color: var(--color-bg-deep);
+    width: 100%;
+    padding: var(--space-8) 0;
+  }
+
+  .footer-sub-inner {
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: var(--space-4);
   }
 
   @media (min-width: 768px) {

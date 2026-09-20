@@ -54,15 +54,19 @@ Base styles are mobile values; desktop is a progressive enhancement layered on t
   /* CTA text override — scoped exception, see note below */
   --color-cta-text: #0F172A;
   --color-cta-text-hover: #000000;
+
+  /* Sub-footer strip — scoped exception, see note below */
+  --color-bg-deep: #1F201F;
 }
 ```
 
 Rules:
-- `--color-bg` / `--color-bg-alt` alternate section-by-section (see §5, Section backgrounds) for scroll legibility. Keep the shift subtle — never introduce a third shade.
+- `--color-bg` / `--color-bg-alt` alternate section-by-section (see §5, Section backgrounds) for scroll legibility. Keep the shift subtle — never introduce a third shade. (The "never introduce a third shade" rule refers to main alternating section backgrounds; `--color-bg-deep` below is a separate, explicitly scoped exception that does not count against this rule.)
 - `--color-action` (green) is reserved for CTAs/action elements only: primary button fill, CTA hover/focus, confirmation indicators. Never for nav, decoration, or general highlighting.
 - `--color-accent` (blue) covers everything else interactive: inline links, nav hover/active, non-CTA focus rings, logo pupils.
 - Never recolor the logo itself with `#147D40` / `#6BD98D` (binding brand rule).
 - `--color-cta-text` / `--color-cta-text-hover` are a **deliberate, scoped exception** to the closed palette above, added for the "Book Intro Call" button specifically. Not derived from brand palette, not reusable elsewhere — a different element needing a text-color override is its own decision, not a default to these two values.
+- `--color-bg-deep` (`#1F201F`) is a **deliberate, scoped exception** to the closed palette above, added exclusively for the footer's sub-footer/legal strip background. Not reusable elsewhere. The "never introduce a third shade" rule in §3 and §5 refers to the main alternating section backgrounds, not this scoped exception.
 
 ### Typography
 
@@ -215,7 +219,7 @@ Sections alternate `--color-bg` / `--color-bg-alt` for scroll-position legibilit
 | Pre-footer CTA | `--color-bg-alt` |
 | Footer | `--color-bg` |
 
-Keep the shift subtle (the two tokens are intentionally close); never introduce a third shade.
+Keep the shift subtle (the two tokens are intentionally close); never introduce a third shade. (This refers to main alternating section backgrounds; the footer's sub-footer strip uses `--color-bg-deep` as a scoped exception documented in §3.)
 
 ---
 
@@ -394,6 +398,8 @@ Three link columns, verbatim:
 - **About Us:** Contact Us → `/contact-form/` · Iman's Upwork → `https://www.upwork.com/freelancers/imannazari` · Agency's Upwork → `https://www.upwork.com/agencies/1718792436665155584/` · Fiverr → `https://www.fiverr.com/ishto7` · GitHub → `https://github.com/99ways-io` · LinkedIn → `https://www.linkedin.com/company/99ways-io/` · Medium → `https://medium.com/nes-stories` · Google Maps → `https://maps.app.goo.gl/daoBjTCZu7YghnJj9`
 
 **No Google Maps embed** — removed by deliberate decision. The plain external "Google Maps" text link above stays; only the embedded widget is cut. Social icons row (`--color-text-muted`, hover `--color-accent`): LinkedIn, Iman's Upwork, Agency's Upwork, Fiverr, GitHub, Medium — real icon sources in §7.
+
+**Sub-footer strip:** Below the social icons row is a dedicated `footer-sub` container with background `--color-bg-deep` (`#1F201F`, a scoped exception to the "never introduce a third shade" rule — see §3). This darker strip contains only the legal text and copyright/links line, visually marking the page end. Social icons row and everything above it keep `--color-bg` unchanged.
 
 Legal text (`--text-small`), verbatim:
 > *Ninety Nine Ways* is a registered trademark of Nazari Ecom Solutions. Nazari Ecom Solutions is registered with the Dutch Chamber of Commerce (KvK) under registration number 91552451. Office: Mr. Treublaan 7, 1097 DP Amsterdam, The Netherlands. VAT Identification Number: NL004899587B87.

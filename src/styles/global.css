@@ -44,6 +44,9 @@
   /* CTA text override (scoped to primary CTA button) */
   --color-cta-text: #0F172A;
   --color-cta-text-hover: #000000;
+
+  /* Sub-footer (scoped exception to "never introduce a third shade" rule; see ARCHITECTURE.md §3, §8) */
+  --color-bg-deep: #1F201F;
 }
 
 /* -------------------------------------------------------------------
