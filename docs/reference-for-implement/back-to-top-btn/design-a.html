@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Back to Top — Design A ("The Dot")</title>
+<style>
+  :root{
+    --ink: #1d1e1d;          /* numeral charcoal, from logo */
+    --ink-soft: #292b2a;     /* button body fill */
+    --ink-deep: #131413;     /* button body, pressed */
+    --blue: #3558b8;         /* logo dot blue */
+    --blue-bright: #5c7fe0;  /* hover-state blue */
+    --paper: #f5f4f1;
+    --paper-line: #e4e2dd;
+    --ring-track: rgba(53, 88, 184, 0.18);
+    --btn-size: 56px;
+    --dot-size: 9px;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html{ scroll-behavior: auto; } /* JS drives the smooth scroll, see below */
+
+  body{
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.6;
+  }
+
+  /* ---------- demo page chrome (not part of the component) ---------- */
+
+  .demo-header{
+    position: sticky; top: 0; z-index: 10;
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 32px;
+    background: rgba(245,244,241,0.86);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--paper-line);
+  }
+  .demo-header img{ width: 28px; height: 28px; display:block; }
+  .demo-header span{ font-size: 14px; color: #6b6b6b; }
+
+  .demo-progress{ position: fixed; top:0; left:0; height:3px; background: var(--blue); width:0%; z-index: 20; transition: width .05s linear; }
+
+  main{ max-width: 640px; margin: 0 auto; padding: 64px 32px 30vh; }
+  h1{ font-size: clamp(32px, 5vw, 48px); margin: 0 0 8px; letter-spacing: -0.02em; }
+  .lede{ color:#5a5a5a; font-size: 18px; margin-bottom: 56px; }
+  section{ margin-bottom: 56px; }
+  h2{ font-size: 22px; margin-bottom: 10px; letter-spacing: -0.01em; }
+  p{ color:#3a3a3a; margin: 0 0 14px; }
+  .marker{ display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:var(--ink-soft); color:#fff; font-size:12px; margin-right:10px; position:relative; top:-1px; }
+
+  .control-panel{
+    position: fixed; left: 24px; bottom: 24px; z-index: 30;
+    background: #fff; border: 1px solid var(--paper-line); border-radius: 12px;
+    padding: 14px 16px; font-size: 12.5px; color:#555;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    max-width: 220px;
+  }
+  .control-panel strong{ display:block; color: var(--ink); font-size: 13px; margin-bottom: 6px; }
+  .control-panel button{
+    font: inherit; font-size: 12px; padding: 6px 10px; margin: 6px 6px 0 0;
+    border: 1px solid var(--paper-line); background: var(--paper); border-radius: 7px; cursor: pointer;
+  }
+  .control-panel button:hover{ border-color: var(--blue); color: var(--blue); }
+
+  @media (max-width: 640px){
+    .control-panel{ display:none; }
+  }
+
+  /* =========================================================
+     COMPONENT: back-to-top button ("The Dot")
+     Concept: the blue counter-dot from the "99" wordmark is
+     the seed of the button. It sits fixed on the circle like
+     the logo's eye; the ring is a scroll-progress meter; the
+     whole thing arrives in one overshoot "pop" the first time
+     it's needed, rather than a generic fade.
+     ========================================================= */
+
+  .btt{
+    position: fixed;
+    right: 28px;
+    bottom: 28px;
+    width: var(--btn-size);
+    height: var(--btn-size);
+    z-index: 40;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    border: none;
+    padding: 0;
+    background: none;
+
+    opacity: 0;
+    transform: scale(0.3);
+    pointer-events: none;
+    transition:
+      opacity .35s ease,
+      transform .55s cubic-bezier(.34, 1.56, .64, 1);
+  }
+  .btt.is-visible{
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+  }
+  .btt.is-returning{
+    /* reverse of the entrance, played on arrival at top */
+    transition:
+      opacity .4s ease .05s,
+      transform .45s cubic-bezier(.5, 0, .75, 0) .05s;
+    opacity: 0;
+    transform: scale(0.3);
+  }
+
+  .btt-ring{
+    position: absolute; inset: 0;
+    transform: rotate(-90deg);
+    overflow: visible;
+  }
+  .btt-ring circle{
+    fill: none;
+    stroke-width: 2.5;
+  }
+  .btt-ring .track{ stroke: var(--ring-track); }
+  .btt-ring .progress{
+    stroke: var(--blue);
+    stroke-linecap: round;
+    transition: stroke-dashoffset .12s linear, stroke .3s ease;
+  }
+
+  .btt-core{
+    position: absolute; inset: 4px;
+    border-radius: 50%;
+    background: var(--ink-soft);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 16px rgba(20,20,20,0.28), inset 0 0 0 1px rgba(255,255,255,0.04);
+    transition: background .25s ease, transform .18s ease, box-shadow .25s ease;
+  }
+  .btt:hover .btt-core{
+    background: var(--ink-deep);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(20,20,20,0.34), inset 0 0 0 1px rgba(255,255,255,0.06);
+  }
+  .btt:active .btt-core{
+    transform: translateY(0px) scale(0.94);
+  }
+  .btt:focus-visible .btt-core{
+    outline: 2px solid var(--blue-bright);
+    outline-offset: 3px;
+  }
+
+  .btt-arrow{
+    width: 18px; height: 18px;
+    stroke: #f2f1ee;
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+    transition: transform .28s cubic-bezier(.34,1.56,.64,1);
+  }
+  .btt:hover .btt-arrow{ transform: translateY(-2px); }
+  .btt.is-launching .btt-arrow{ animation: flick .5s ease; }
+  @keyframes flick{
+    0%{ transform: translateY(0); }
+    35%{ transform: translateY(-6px); opacity: .4; }
+    36%{ transform: translateY(6px); opacity: .4; }
+    100%{ transform: translateY(0); opacity: 1; }
+  }
+
+  /* the quoted "eye" — same blue dot, same charcoal gap-ring as the
+     wordmark's counters, fixed at the same relative position (upper
+     inside edge of the glyph) */
+  .btt-dot{
+    position: absolute;
+    top: 9px; left: 9px;
+    width: var(--dot-size); height: var(--dot-size);
+    border-radius: 50%;
+    background: var(--blue);
+    box-shadow: 0 0 0 2.5px var(--ink-soft);
+    transition: background .2s ease, transform .2s ease;
+    transform-origin: center;
+  }
+  .btt:hover .btt-dot{ background: var(--blue-bright); }
+
+  /* the "wink": a quick vertical pinch, referencing nothing more than
+     the dot itself — plays once per hover-in, not on a loop */
+  .btt.is-winking .btt-dot{ animation: wink .42s ease; }
+  @keyframes wink{
+    0%{ transform: scaleY(1); }
+    40%{ transform: scaleY(0.15); }
+    70%{ transform: scaleY(1.15); }
+    100%{ transform: scaleY(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .btt{ transition: opacity .3s ease; transform: none !important; }
+    .btt.is-visible{ transform: none; }
+    .btt.is-returning{ transform: none; transition: opacity .3s ease; }
+    .btt-arrow, .btt-dot{ animation: none !important; transition: none !important; }
+    .btt:hover .btt-arrow{ transform: none; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="demo-progress" id="demoProgress"></div>
+
+  <header class="demo-header">
+    <img src="data:image/png;base64,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" alt="99 logo">
+    <span>Design A — "The Dot" · scroll to see the button arrive</span>
+  </header>
+
+  <main>
+    <h1>Back-to-top, quoting the mark</h1>
+    <p class="lede">
+      The button doesn't invent a new visual language — it borrows the one thing
+      the logo already owns: a small blue dot, held inside a charcoal ring.
+      Scroll down to bring it in.
+    </p>
+
+    <section>
+      <h2><span class="marker">1</span>One entrance, not a fade</h2>
+      <p>Past a scroll threshold the button pops in once, with a short overshoot,
+      instead of fading in on every scroll tick. It only ever announces itself once per visit to the bottom of the page.</p>
+    </section>
+
+    <section>
+      <h2><span class="marker">2</span>The ring is a meter</h2>
+      <p>The blue arc isn't decorative — its length is how far down the page you are.
+      Watch it while you scroll; it empties again as the page returns to the top.</p>
+    </section>
+
+    <section>
+      <h2><span class="marker">3</span>A wink, not a bounce</h2>
+      <p>Hovering plays a quick pinch on the dot — a literal wink, since that dot
+      is the same shape as the counter of the "9". No generic bounce or bright glow.</p>
+    </section>
+
+    <section>
+      <h2><span class="marker">4</span>Long content, for testing</h2>
+      <p>Scroll further to confirm the button stays anchored, the ring keeps tracking,
+      and nothing about the animation feels different the fifth time as the first.</p>
+      <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
+      doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
+      veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+      <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
+      sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>
+      <p>Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur,
+      adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore.</p>
+      <p>Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit
+      laboriosam, nisi ut aliquid ex ea commodi consequatur?</p>
+      <p>Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam
+      nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas.</p>
+      <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis
+      praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias.</p>
+      <p>Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore,
+      cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod.</p>
+      <p>Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus
+      saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.</p>
+      <p>Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis
+      voluptatibus maiores alias consequatur aut perferendis doloribus asperiores.</p>
+    </section>
+  </main>
+
+  <div class="control-panel">
+    <strong>Demo controls</strong>
+    <button id="jumpMid">Jump to middle</button>
+    <button id="jumpEnd">Jump to end</button>
+    <button id="jumpTop">Jump to top</button>
+  </div>
+
+  <!-- ===================== the component ===================== -->
+  <button class="btt" id="btt" type="button" aria-label="Back to top">
+    <svg class="btt-ring" viewBox="0 0 56 56" aria-hidden="true">
+      <circle class="track" cx="28" cy="28" r="25.5"></circle>
+      <circle class="progress" id="bttProgress" cx="28" cy="28" r="25.5"></circle>
+    </svg>
+    <span class="btt-core">
+      <svg class="btt-arrow" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 19V5"></path>
+        <path d="M6 11l6-6 6 6"></path>
+      </svg>
+    </span>
+    <span class="btt-dot" aria-hidden="true"></span>
+  </button>
+  <!-- =========================================================== -->
+
+  <script>
+  (function(){
+    var btn = document.getElementById('btt');
+    var progressCircle = document.getElementById('bttProgress');
+    var demoProgress = document.getElementById('demoProgress');
+
+    var SHOW_AT = 320;          // px scrolled before the button appears
+    var R = 25.5;
+    var CIRC = 2 * Math.PI * R;
+    progressCircle.style.strokeDasharray = CIRC.toFixed(2);
+    progressCircle.style.strokeDashoffset = CIRC.toFixed(2);
+
+    var visible = false;
+    var ticking = false;
+
+    function scrollPct(){
+      var h = document.documentElement;
+      var max = h.scrollHeight - h.clientHeight;
+      return max > 0 ? Math.min(h.scrollTop / max, 1) : 0;
+    }
+
+    function update(){
+      var y = window.scrollY || document.documentElement.scrollTop;
+      var pct = scrollPct();
+
+      demoProgress.style.width = (pct * 100).toFixed(1) + '%';
+
+      var offset = CIRC * (1 - pct);
+      progressCircle.style.strokeDashoffset = offset.toFixed(2);
+
+      var shouldShow = y > SHOW_AT;
+      if (shouldShow && !visible){
+        btn.classList.remove('is-returning');
+        btn.classList.add('is-visible');
+        visible = true;
+      } else if (!shouldShow && visible){
+        btn.classList.remove('is-visible');
+        visible = false;
+      }
+      ticking = false;
+    }
+
+    function onScroll(){
+      if (!ticking){
+        requestAnimationFrame(update);
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    update();
+
+    // hover wink — replays each time the pointer re-enters
+    btn.addEventListener('pointerenter', function(){
+      btn.classList.remove('is-winking');
+      // force reflow so the animation can restart
+      void btn.offsetWidth;
+      btn.classList.add('is-winking');
+    });
+    btn.addEventListener('animationend', function(e){
+      if (e.animationName === 'wink') btn.classList.remove('is-winking');
+      if (e.animationName === 'flick') btn.classList.remove('is-launching');
+    });
+
+    function goTop(){
+      btn.classList.add('is-launching');
+      btn.classList.add('is-returning');
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+    }
+
+    btn.addEventListener('click', goTop);
+    btn.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        goTop();
+      }
+    });
+
+    // demo-only controls
+    document.getElementById('jumpMid').addEventListener('click', function(){
+      window.scrollTo({ top: document.documentElement.scrollHeight * 0.5, behavior: 'smooth' });
+    });
+    document.getElementById('jumpEnd').addEventListener('click', function(){
+      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+    });
+    document.getElementById('jumpTop').addEventListener('click', goTop);
+  })();
+  </script>
+</body>
+</html>
