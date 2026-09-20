@@ -185,6 +185,8 @@ Fraunces is a display face — used for headings/titles only, never body text (h
 - **Configurability:** density, size range, opacity range, rotation range, protected-zone buffer all adjustable from one place (props/config object/CSS custom properties) — not scattered inline through markup.
 - **Reuse:** generic enough for other sections to mount their own instance later with their own protected-zone bounds and density config. Only the Hero uses it currently.
 
+**BackToTop** — a scroll-progress ring button fixed at the bottom-right corner. Appears once `window.scrollY > 320px` with an overshoot pop animation. Uses `--color-bg` (core), `--color-text` (arrow), `--color-accent` (ring, dot, focus), `--color-border-strong` (hover core). No `--color-action` references. Mounted once in `BaseLayout.astro` before `</body>`.
+
 ---
 
 ## 5. Section backgrounds
@@ -209,6 +211,7 @@ Keep the shift subtle (the two tokens are intentionally close); never introduce 
 ## 6. Motion
 
 - Interactions: opacity/transform transitions only, 150–200ms ease, no bounce/spring easing.
+- BackToTop entrance/exit animations use spring overshoot easing and durations of 350–550ms — a **deliberate, scoped exception** to the 150–200ms/ease rule above. Applies only to this component, not as precedent elsewhere.
 - Logo pupil motion: future work, not in scope.
 - Decorative Logo Field: explicitly excluded from all motion — static only, regardless of viewport or interaction state.
 

@@ -29,7 +29,6 @@ Status as of the latest design pass:
 - **Not yet built:** anything beyond the homepage. The nav already links to service pages (`/hire-cro-expert/`, etc.), category archive pages, individual Academy posts, and legal pages — none of these subpages are in scope yet. When site expansion beyond the homepage starts, the design system in `ARCHITECTURE.md` §3–4 is the standard to extend from, not a homepage-only ruleset — component definitions, tokens, and the mobile-first approach should scale to subpages without redefinition.
 - **Explicitly out of scope for the current pass** (don't build these without a new explicit instruction):
   - Cookie consent banner and the email-gate/subscription modal seen on the old WordPress article pages — these are article/content-gating mechanics, not homepage structure. Revisit if/when article templates get redesigned.
-  - Logo pupil hover/motion animation — documented as future brand work, not part of this release.
   - Light theme / theme toggle — dark-only for the foreseeable future.
   - Google Maps embed in the footer — removed by deliberate decision. The plain external "Google Maps" text link stays; only the embedded widget was cut. Only revisit if explicitly requested again.
   - Any motion/animation on the Decorative Logo Field — it's a static component by design, see `ARCHITECTURE.md` §4.
