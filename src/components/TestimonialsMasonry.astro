@@ -1,0 +1,111 @@
+---
+// Testimonials Masonry — static image wall replacing the 3D carousel internals.
+// Section wrapper (title, background, spacing, container width) is identical to the
+// original TestimonialsCarousel.astro; only the image-rendering mechanism changed.
+//
+// Images sourced from src/assets/testimonials/ via astro:assets.
+// Alt texts and order match ARCHITECTURE.md §8 verbatim.
+// Aspect-ratio classes use each image's actual measured pixel dimensions.
+
+import { Image } from 'astro:assets';
+import review01 from '../assets/testimonials/01-funnel-optimization.webp';
+import review02 from '../assets/testimonials/02-ecommerce-analytics-cro.webp';
+import review03 from '../assets/testimonials/03-marketing-cro-consultation.webp';
+import review04 from '../assets/testimonials/04-cro-quick-job.webp';
+import review05 from '../assets/testimonials/05-posthog-analytics.webp';
+import review06 from '../assets/testimonials/06-cro-coaching-business.webp';
+import review07 from '../assets/testimonials/07-cro-posthog.webp';
+import review08 from '../assets/testimonials/08-course-marketing-funnel.webp';
+import review09 from '../assets/testimonials/09-saas-posthog-setup.webp';
+
+interface Review {
+  image: typeof review01;
+  alt: string;
+  ratioClass: string;
+}
+
+const reviews: Review[] = [
+  { image: review01, alt: 'Client review: Funnel Optimization Assessment and Recommendations', ratioClass: 'r-1' },
+  { image: review02, alt: 'Client review: E-commerce analytics, CRO, and A/B testing', ratioClass: 'r-2' },
+  { image: review03, alt: 'Client review: Marketing and conversion rate optimization consultation', ratioClass: 'r-3' },
+  { image: review04, alt: 'Client review: Conversion Rate Optimization Expert quick job', ratioClass: 'r-4' },
+  { image: review05, alt: 'Client review: PostHog and Analytics Expert', ratioClass: 'r-5' },
+  { image: review06, alt: 'Client review: Conversion Rate Optimization for Coaching Business', ratioClass: 'r-6' },
+  { image: review07, alt: 'Client review: Conversion Rate Optimization and PostHog', ratioClass: 'r-7' },
+  { image: review08, alt: 'Client review: Course Marketing Funnel Manager', ratioClass: 'r-8' },
+  { image: review09, alt: 'Client review: SaaS Google Analytics and PostHog setup', ratioClass: 'r-9' },
+];
+---
+
+<section class="testimonials-section bg-default">
+  <div class="testimonials-container">
+    <h2 class="testimonials-title">How Partners Review Us</h2>
+
+    <div class="review-grid">
+      {reviews.map((r) => (
+        <article class:list={["review-tile", r.ratioClass]}>
+          <Image src={r.image} alt={r.alt} loading="lazy" />
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ── Section wrapper (byte-identical to original TestimonialsCarousel.astro) ── */
+  .testimonials-section { padding-block: var(--space-8); }
+  .testimonials-container { max-width: 1200px; margin-inline: auto; padding-inline: var(--space-4); }
+  .testimonials-title {
+    font-family: var(--font-primary); font-weight: 900;
+    font-variation-settings: "SOFT" 100; font-size: var(--text-h2);
+    line-height: 1.2; color: var(--color-text); margin: 0 0 var(--space-6);
+  }
+
+  /* ── Masonry grid ── */
+  .review-grid {
+    column-count: 3;
+    column-gap: 14px;
+  }
+  .review-tile {
+    break-inside: avoid;
+    margin-bottom: 14px;
+  }
+  .review-tile img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  /* Per-image aspect-ratio classes — actual measured pixel dimensions */
+  .r-1 { aspect-ratio: 796 / 226; }
+  .r-2 { aspect-ratio: 686 / 221; }
+  .r-3 { aspect-ratio: 794 / 198; }
+  .r-4 { aspect-ratio: 797 / 283; }
+  .r-5 { aspect-ratio: 794 / 531; }
+  .r-6 { aspect-ratio: 795 / 737; }
+  .r-7 { aspect-ratio: 794 / 226; }
+  .r-8 { aspect-ratio: 795 / 274; }
+  .r-9 { aspect-ratio: 794 / 328; }
+
+  /* ── Responsive column count ── */
+  @media (max-width: 900px) {
+    .review-grid { column-count: 2; }
+  }
+  @media (max-width: 560px) {
+    .review-grid { column-count: 1; }
+  }
+
+  /* ── Responsive wrapper (identical to original) ── */
+  @media (max-width: 767px) {
+    .testimonials-section { padding-block: var(--space-6); }
+    .testimonials-container { padding-inline: var(--space-3); }
+  }
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .testimonials-section { padding-block: var(--space-10); }
+  }
+  @media (min-width: 1024px) {
+    .testimonials-section { padding-block: var(--space-16); }
+    .testimonials-container { padding-inline: var(--space-12); }
+  }
+</style>

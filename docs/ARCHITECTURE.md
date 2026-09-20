@@ -134,17 +134,30 @@ Fraunces is a display face — used for headings/titles only, never body text (h
 - Distinct from the generic inline link. Used for "View all posts" and similar. `--color-text-muted` default, `--color-accent` hover — color shift only, no underline at rest or hover.
 - Small arrow icon (→), left of text, transparent at rest, fades/slides in from the left on hover (150–200ms ease).
 
-**Card — testimonial carousel / blog grid**
+**Card — blog grid**
 - Background matches parent section (`--color-bg` or `--color-bg-alt`), 1px `--color-border`, padding `--space-4`, no drop shadows.
 
-**Carousel — testimonials** (heavier interaction than the rest of the site's flat language — a deliberate, isolated exception, not a precedent):
-- 3 cards visible: center full opacity/scale (focal), left/right faded (~0.5–0.7 opacity) and slightly scaled down (~85–90%).
-- **Framing exception to the base Card component:** zero internal padding — image fills edge-to-edge, border hugs the image directly. Baseline container: **385.75px × 140.83px** (~2.74:1), from image #4 ("Client review: Conversion Rate Optimization Expert quick job").
-- **Cropping — binding, corrected spec:** zero horizontal cropping ever; every image renders at 100% container width regardless of native aspect ratio. Vertical overflow only is cropped, top-down (`object-position: top`). A bare `object-fit: cover` is NOT sufficient alone — it can crop horizontally when a source image is narrower/taller than the container; implementation must guarantee full-width rendering first, then clip vertical overflow only.
-- Auto-rotation ~5s intervals, smooth directional horizontal slide, pauses on hover/touch, resumes after idle.
-- Clicking a side card transitions it to center (same slide animation).
-- Clicking the center card opens a full/near-full-screen lightbox, image uncropped (`object-fit: contain`), dark backdrop. Lightbox navigation reuses the same faded-peek pattern (click a peek to center it) — not separate arrow buttons. Dismiss via backdrop click, close button, or `Esc` — all three required.
-- Same carousel, same depth treatment, on mobile and desktop — no simplified mobile fallback. Outer section: `overflow-x: hidden`; must stay within `100vw` on every breakpoint, zero page-level horizontal scroll.
+**Masonry — testimonials** (section was previously a 3D carousel — replaced for mobile breakage where the carousel caused horizontal page scroll on mobile viewports; the replacement is a static CSS multi-column masonry wall with no interaction). Section-level properties (background `--color-bg`, title "How Partners Review Us" with `--text-h2`, fonts, spacing, container width) are unchanged from the prior version and governed by §3/§5/§8.
+
+- 9 images rendered as a static masonry grid using CSS multi-column layout. No auto-rotation, no lightbox, no hover/peek/scale states, no lightbox.
+- **Column counts:** 3 columns desktop (≥900px), 2 columns tablet (560–899px), 1 column mobile (<560px). `column-gap: 14px`.
+- **break-inside: avoid** on each tile to prevent image splitting across columns.
+- **Per-image aspect-ratio** via CSS class matching each image's actual native dimensions (measured from source files):
+  | Class | Width | Height | File |
+  |---|---|---|---|
+  | `.r-1` | 796 | 226 | `01-funnel-optimization.webp` |
+  | `.r-2` | 686 | 221 | `02-ecommerce-analytics-cro.webp` |
+  | `.r-3` | 794 | 198 | `03-marketing-cro-consultation.webp` |
+  | `.r-4` | 797 | 283 | `04-cro-quick-job.webp` |
+  | `.r-5` | 794 | 531 | `05-posthog-analytics.webp` |
+  | `.r-6` | 795 | 737 | `06-cro-coaching-business.webp` |
+  | `.r-7` | 794 | 226 | `07-cro-posthog.webp` |
+  | `.r-8` | 795 | 274 | `08-course-marketing-funnel.webp` |
+  | `.r-9` | 794 | 328 | `09-saas-posthog-setup.webp` |
+- **object-fit: cover** on images as a safety net if a delivered image doesn't exactly match its declared ratio.
+- Images sourced via `astro:assets` `<Image />` with `loading="lazy"`.
+- Component: `TestimonialsMasonry.astro` — imports from `src/assets/testimonials/`, no client-side JavaScript.
+- **Historical note:** This section previously used a 3D carousel (`TestimonialsCarousel.astro`, now deleted) with auto-rotation (~5s), peek/scale states for side cards (~0.5–0.7 opacity, ~85–90% scale), and a full-screen lightbox. The carousel caused horizontal page-level scroll on mobile (375px–414px viewports). The masonry replacement resolves this while preserving the identical section wrapper (background, title, fonts, spacing, container width).
 
 **Avatar/photo — About Us and similar**
 - Cap size: 96px mobile → 128px desktop, circular crop. Deliberately small — identity markers, not hero-scale visuals.
@@ -183,7 +196,7 @@ Sections alternate `--color-bg` / `--color-bg-alt` for scroll-position legibilit
 | Header | `--color-bg` |
 | Hero | `--color-bg` |
 | Video ("How I Find") | `--color-bg-alt` |
-| Testimonials carousel | `--color-bg` |
+| Testimonials masonry | `--color-bg` |
 | About Us | `--color-bg-alt` |
 | Academy blog grid | `--color-bg` |
 | Pre-footer CTA | `--color-bg-alt` |
@@ -226,11 +239,11 @@ Paths relative to `assets/` in this repo (migrated wholesale from the original b
 
 No CMS import path exists in this Astro-only stack — these were downloaded and re-hosted under `src/assets/` (for `astro:assets` optimization) or `public/` as appropriate. Paired with their Astro content-collection entry rather than hardcoded inline, where applicable.
 
-**Testimonial screenshots (carousel, 9 images, display order):**
+**Testimonials masonry, 9 images, display order:**
 1. `Screenshot-2025-10-21-at-11.46.12.webp`
 2. `Screenshot-2025-10-20-at-20.10.05-e1761003445793.webp`
 3. `Screenshot-2025-10-21-at-11.39.31.webp`
-4. `Screenshot-2025-10-21-at-11.40.23.webp` — this is the carousel's baseline aspect-ratio reference image
+4. `Screenshot-2025-10-21-at-11.40.23.webp`
 5. `Screenshot-2025-10-21-at-11.33.00.webp`
 6. `Screenshot-2025-10-21-at-11.29.51.webp`
 7. `Screenshot-2025-10-21-at-11.37.38.webp`
@@ -302,13 +315,13 @@ Background `--color-bg`. Layout: fully centered single column (headline, subhead
 Background `--color-bg-alt`. Section title (`--text-h2`), verbatim. YouTube embed, ID `STouQwJZ4bY`, standard responsive 16:9 container, thin `--color-accent` border (1–2px), no other decoration.
 
 ### "How Partners Review Us"
-Background `--color-bg`. Full carousel spec in §4 (Components — Carousel). Section title (`--text-h2`), verbatim.
+Background `--color-bg`. Masonry image wall spec in §4 (Components — Masonry). Section title (`--text-h2`), verbatim.
 
 9 reviews, order and alt text (preserve exactly, do not shorten):
 1. `Client review: Funnel Optimization Assessment and Recommendations`
 2. `Client review: E-commerce analytics, CRO, and A/B testing`
 3. `Client review: Marketing and conversion rate optimization consultation`
-4. `Client review: Conversion Rate Optimization Expert quick job` *(carousel's baseline aspect-ratio image)*
+4. `Client review: Conversion Rate Optimization Expert quick job`
 5. `Client review: PostHog and Analytics Expert`
 6. `Client review: Conversion Rate Optimization for Coaching Business`
 7. `Client review: Conversion Rate Optimization and PostHog`
