@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Design A — Partner Review Wall (Masonry)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          paper: "#F5F4EF",
+          ink: "#17181C",
+          gold: "#B8863B",
+          line: "#D8D6CC",
+          muted: "#6E6D66",
+        },
+        fontFamily: {
+          display: ["Fraunces", "serif"],
+          sans: ["Archivo", "sans-serif"],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  :root { color-scheme: light; }
+  body { font-family: 'Archivo', sans-serif; background: #F5F4EF; }
+
+  /* ---------- Masonry via CSS multi-column ---------- */
+  /* All 9 source images share one width and vary only in height, so a
+     3-column masonry (browser-balanced) is the natural fit — no manual
+     grid-span math needed. Each tile keeps its true aspect-ratio. */
+  .review-grid {
+    column-count: 3;
+    column-gap: 14px;
+  }
+  .review-tile {
+    break-inside: avoid;
+    margin-bottom: 14px;
+    border-radius: 3px;
+    overflow: hidden;
+    background: #17181C;
+  }
+  .review-tile img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  /* exact ratios supplied for the 9 real images (width / height) */
+  .r-1 { aspect-ratio: 385.75 / 100.60; }
+  .r-2 { aspect-ratio: 385.75 / 128.33; }
+  .r-3 { aspect-ratio: 385.75 / 140.83; }
+  .r-4 { aspect-ratio: 385.75 / 114.08; }
+  .r-5 { aspect-ratio: 385.75 / 136.88; }
+  .r-6 { aspect-ratio: 385.75 / 259.95; }
+  .r-7 { aspect-ratio: 385.75 / 162.86; }
+  .r-8 { aspect-ratio: 385.75 / 113.81; }
+  .r-9 { aspect-ratio: 385.75 / 358.08; }
+
+  @media (max-width: 900px) {
+    .review-grid { column-count: 2; }
+  }
+  @media (max-width: 560px) {
+    .review-grid { column-count: 1; }
+  }
+</style>
+</head>
+<body class="text-ink">
+
+  <section class="max-w-[1240px] mx-auto px-6 md:px-10 py-16 md:py-24">
+
+    <!-- Header: fixed top-left, minimal copy -->
+    <header class="mb-10 md:mb-14 max-w-md">
+      <p class="text-xs tracking-wide text-muted mb-3">Trusted by 40+ partner teams</p>
+      <h2 class="font-display text-3xl md:text-[2.75rem] leading-[1.08] text-ink">
+        How our partners<br />review us
+      </h2>
+    </header>
+
+    <!-- Masonry review wall -->
+    <div class="review-grid">
+
+      <article class="review-tile r-1">
+        <img src="https://placehold.co/772x201/2f3a2f/eae7dd?text=Review+01" alt="Screenshot of partner review, Wren Logistics" loading="lazy" />
+      </article>
+
+      <article class="review-tile r-2">
+        <img src="https://placehold.co/772x257/3d3226/eae7dd?text=Review+02" alt="Screenshot of partner review, Kettlewell Studio" loading="lazy" />
+      </article>
+
+      <article class="review-tile r-3">
+        <img src="https://placehold.co/772x282/1f2a33/eae7dd?text=Review+03" alt="Screenshot of partner review, Osei Financial" loading="lazy" />
+      </article>
+
+      <article class="review-tile r-4">
+        <img src="https://placehold.co/772x228/33241f/eae7dd?text=Review+04" alt="Screenshot of partner review, Halvorsen Group" loading="lazy" />
+      </article>
+
+      <article class="review-tile r-5">
+        <img src="https://placehold.co/772x274/2a2f3d/eae7dd?text=Review+05" alt="Screenshot of partner review, Northfield Clinics" loading="lazy" />
+      </article>
+
+      <article class="review-tile r-6">
+        <img src="https://placehold.co/772x520/2f3a2f/eae7dd?text=Review+06" alt="Screenshot of partner review, Caldera Freight" loading="lazy" />
+      </article>
+
+      <article class="review-tile r-7">
+        <img src="https://placehold.co/772x326/3d3226/eae7dd?text=Review+07" alt="Screenshot of partner review, Fenn and Co" loading="lazy" />
+      </article>
+
+      <article class="review-tile r-8">
+        <img src="https://placehold.co/772x228/1f2a33/eae7dd?text=Review+08" alt="Screenshot of partner review, Silvertree Retail" loading="lazy" />
+      </article>
+
+      <article class="review-tile r-9">
+        <img src="https://placehold.co/772x716/33241f/eae7dd?text=Review+09" alt="Screenshot of partner review, Bramwell and Sons" loading="lazy" />
+      </article>
+
+    </div>
+  </section>
+
+</body>
+</html>
