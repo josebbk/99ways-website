@@ -262,19 +262,39 @@ a:focus-visible,
   border-radius: 4px;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, box-shadow 180ms ease;
 }
 
+/* Hover glow (§4, Button — primary CTA interaction spec) */
 .btn-primary:hover {
   background-color: color-mix(in srgb, var(--color-action) 90%, black);
   border-color: color-mix(in srgb, var(--color-action) 90%, black);
   color: var(--color-cta-text-hover);
   text-decoration: none;
+  box-shadow: 0 0 20px 0 rgba(107, 217, 141, 0.5);
 }
 
+/* :active / press — deeper darkening + inset shadow (snappier 100ms) */
+.btn-primary:active {
+  background-color: color-mix(in srgb, var(--color-action) 80%, black);
+  border-color: color-mix(in srgb, var(--color-action) 80%, black);
+  color: var(--color-cta-text-hover);
+  text-decoration: none;
+  transition: background-color 100ms ease-out, border-color 100ms ease-out, color 100ms ease-out, box-shadow 100ms ease-out;
+  box-shadow: inset 0 0 12px 0 rgba(0, 0, 0, 0.35), 0 0 8px 0 rgba(107, 217, 141, 0.6);
+}
+
+/* Focus ring (stays in green channel, never blue) */
 .btn-primary:focus-visible {
   outline: 2px solid var(--color-action);
   outline-offset: 2px;
+}
+
+/* Hover-gated interactivity — prevents touch devices from getting stuck in hover */
+@media (hover: hover) {
+  .btn-primary:hover {
+    box-shadow: 0 0 20px 0 rgba(107, 217, 141, 0.5);
+  }
 }
 
 /* Secondary button */

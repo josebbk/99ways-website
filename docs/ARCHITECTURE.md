@@ -123,8 +123,12 @@ Fraunces is a display face — used for headings/titles only, never body text (h
 - **Exception — Decorative Logo Field (below):** scoped exception to every rule above. Applies only to that one component, never as precedent elsewhere.
 
 **Button — primary (CTA)**
-- Background `--color-action`, text `--color-cta-text` (`#0F172A` default, `#000000` hover), font `--text-label` weight 600, padding `10px 24px`, border-radius 2–4px.
+- Background `--color-action`, text `--color-cta-text` (`#0F172A` default, `#000000` hover), font `--text-label` weight 600, padding `10px 24px`, border-radius 4px.
 - Hover/focus: background darkens ~10%, text shifts to `--color-cta-text-hover`, focus ring `--color-action` (stays in the green channel, never blue). **No underline on hover, ever**, regardless of markup (`<a>` or `<button>`).
+- **Hover (glow):** in addition to the ~10% bg darken + text shift, a green glow appears via `box-shadow: 0 0 20px 0 rgba(107, 217, 141, 0.5)` (using `--color-action` / `#6BD98D` as the shadow color). Transition: `box-shadow 180ms ease` alongside the existing `background-color 150ms ease, color 150ms ease`.
+- **Hover-gating:** hover-only styles (box-shadow glow) are wrapped in `@media (hover: hover)` to prevent touch devices from getting stuck in a hover state.
+- **:active / press (distinct from hover):** bg darkens further to ~20% from base (`color-mix(in srgb, var(--color-action) 80%, black)`), and `box-shadow` switches to an inset "pressed" look: `inset 0 0 12px 0 rgba(0,0,0,0.35), 0 0 8px 0 rgba(107,217,141,0.6)`. Uses a snappier `100ms ease-out` transition so the press reads as immediate feedback. This is a scoped exception to the 150–200ms ease budget in §6, but only for the press transition — the hover glow remains at 180ms ease.
+- **No state (rest / hover / active)** introduces `transform`, changes size/padding, or alters box geometry. The button's `getBoundingClientRect()` is identical across all states, preserving Pointer Field aim accuracy. No underline at any state.
 - Every "Book Intro Call" instance (hero, pre-footer) is this same button — same styling, same behavior.
 
 **Button — secondary/ghost**
