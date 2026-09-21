@@ -62,7 +62,7 @@ Base styles are mobile values; desktop is a progressive enhancement layered on t
 
 Rules:
 - `--color-bg` / `--color-bg-alt` alternate section-by-section (see §5, Section backgrounds) for scroll legibility. Keep the shift subtle — never introduce a third shade. (The "never introduce a third shade" rule refers to main alternating section backgrounds; `--color-bg-deep` below is a separate, explicitly scoped exception that does not count against this rule.)
-- `--color-action` (green) is reserved for CTAs/action elements only: primary button fill, CTA hover/focus, confirmation indicators. Never for nav, decoration, or general highlighting.
+- `--color-action` (green) is reserved for CTAs/action elements only: primary button fill, CTA hover/focus, confirmation indicators. Never for nav, decoration, or general highlighting. **Sanctioned uses:** "Book Intro Call" buttons (hero + pre-footer) and "Contact Us" button (header). Both share the same green fill, text color, hover glow, and press animation — the Contact Us button's sole visual differentiator is an 8px border-radius (vs. 4px for Book Intro Call). No other element on the page uses `--color-action`.
 - `--color-accent` (blue) covers everything else interactive: inline links, nav hover/active, non-CTA focus rings, logo pupils. **Decorative exception:** the Pointer Field component (§4, below) uses `--color-accent` as a decorative fill color — an extension of the token into a non-interactive decorative context. Uses `--color-accent` (~80% of instances) and `color-mix(in srgb, var(--color-accent) 80%, white)` (~20%) only. No `--color-action` green is used. This is a scoped exception, not a new color.
 - Never recolor the logo itself with `#147D40` / `#6BD98D` (binding brand rule).
 - `--color-cta-text` / `--color-cta-text-hover` are a **deliberate, scoped exception** to the closed palette above, added for the "Book Intro Call" button specifically. Not derived from brand palette, not reusable elsewhere — a different element needing a text-color override is its own decision, not a default to these two values.
@@ -131,9 +131,8 @@ Fraunces is a display face — used for headings/titles only, never body text (h
 - **No state (rest / hover / active)** introduces `transform`, changes size/padding, or alters box geometry. The button's `getBoundingClientRect()` is identical across all states, preserving Pointer Field aim accuracy. No underline at any state.
 - Every "Book Intro Call" instance (hero, pre-footer) is this same button — same styling, same behavior.
 
-**Button — secondary/ghost**
-- Transparent background, 1px `--color-border-strong` border, text `--color-text`, same padding/type as primary.
-- Hover: border → `--color-accent`. No underline on hover. Applies to "Contact Us" in the header.
+**Button — header CTA (Contact Us)**
+- Shares the exact same styling as the primary CTA (same background `--color-action`, text color, hover glow, press animation, hover-gating). The sole differentiator: `border-radius: 8px` (vs. 4px for Book Intro Call). Rendered as `btn-primary` class with a header-scoped `border-radius: 8px` override (plus a `var(--color-text)` focus outline — green-on-green fill would be invisible). Same font (`--text-label` weight 600) and padding (`10px 24px`). Link target: `/contact-form/`.
 
 **Link — inline/nav**
 - `--color-text` default, `--color-accent` hover/active, no underline at rest, underline on hover.
@@ -335,7 +334,7 @@ Structure: logo (left) — nav (center/right) — CTA (right).
 - Nav items (`--text-label`):
   - **Services** (trigger, no direct link): Conversion Rate Optimization → `/hire-cro-expert/` · PostHog & Product Analytics → `/hire-posthog-expert-guide/` · Hyros & Tracking Setup → `/hire-hyros-expert-guide/`
   - **Resources** (trigger, no direct link): Guides and How-tos → `/category/guides-how-to/` · PostHog Feature Breakdowns → `/category/posthog-feature-breakdown/` · Tools Comparison → `/category/tools-comparison/` · Optimization Experiences → `/category/optimization-experience/` (split tap-target on mobile, see §4) → nested: Featured Experiments → `/category/optimization-experience/featured-experiments/` (hidden until revealed)
-- CTA (ghost button): "Contact Us" → `/contact-form/`. No underline on hover.
+- CTA (green fill, `--color-action`, 8px border-radius): "Contact Us" → `/contact-form/`. Same hover glow/press animation as Book Intro Call. No underline on hover.
 - Clear space around logo per §4 — nav items must not crowd it.
 
 ### Hero

@@ -88,7 +88,7 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
           </li>
         ))}
       </ul>
-      <a href="/contact-form/" class="btn-ghost header-cta">Contact Us</a>
+      <a href="/contact-form/" class="btn-primary header-cta">Contact Us</a>
     </nav>
   </div>
 </header>
@@ -266,6 +266,12 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
     margin-top: var(--space-4);
   }
 
+  /* Green fill + green outline = invisible on green bg — use text-color outline */
+  .header-cta:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+  }
+
   @media (min-width: 768px) {
     .header-container {
       padding-inline: var(--space-12);
@@ -377,6 +383,12 @@ const compactSrc = '/assets/logo/compact/dark/99ways-compact-dark-background.svg
 
     .header-cta {
       margin-top: 0;
+      border-radius: 8px;
+    }
+
+    .header-cta:focus-visible {
+      outline: 2px solid var(--color-text);
+      outline-offset: 2px;
     }
   }
 
