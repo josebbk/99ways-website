@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40">
+  <!--
+    Pointer glyph for the Pre-Footer CTA "Pointer Field" decoration.
+    Default orientation: pointing right (east), tip at x=100.
+    Placed instances rotate this shape to aim toward the CTA center.
+    Single flat line + open chevron head, no fill areas.
+  -->
+  <g fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="2" y1="20" x2="78" y2="20" />
+    <polyline points="58,4 96,20 58,36" />
+  </g>
+</svg>

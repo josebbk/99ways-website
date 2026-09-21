@@ -1,13 +1,16 @@
 ---
 // Pre-footer CTA — single centered column, primary button
 // Between Academy blog grid and footer
-// Per design.md §6 (bg-alt), §5 (primary button spec), HOMEPAGE_SPEC.md §7
+// Per ARCHITECTURE.md §8 (bg-alt, section spec)
+
+import PointerField from './PointerField.astro';
 
 const ctaLink = '#';
 const ctaLabel = 'Book Intro Call';
 ---
 
-<section class="prefooter bg-alt">
+<section id="pre-footer-cta" class="prefooter bg-alt">
+  <PointerField />
   <div class="prefooter-container">
     <a href={ctaLink} class="btn-primary">{ctaLabel}</a>
   </div>
@@ -16,6 +19,8 @@ const ctaLabel = 'Book Intro Call';
 <style>
   .prefooter {
     padding-block: var(--space-8);
+    position: relative;
+    overflow: hidden;
   }
 
   .prefooter-container {
@@ -26,6 +31,8 @@ const ctaLabel = 'Book Intro Call';
     flex-direction: column;
     align-items: center;
     text-align: center;
+    position: relative;
+    z-index: 1;
   }
 
   @media (min-width: 1024px) {

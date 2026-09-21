@@ -1,0 +1,246 @@
+---
+// Pointer Field — decorative background layer behind the Pre-Footer CTA button.
+//
+// Deterministic, geometry-accurate pointer field. Each pointer's rotation is
+// computed from its actual pixel position to the button's actual measured
+// center (getBoundingClientRect()), recalculated on resize and after
+// webfonts load. Seeded PRNG (Mulberry32, seed 99177) so the field is
+// stable across reloads/resizes at a given breakpoint tier.
+//
+// Per ARCHITECTURE.md §4 (new component spec) and
+// docs/reference-for-implement/pre-footer-artwork/design-a-spec.md.
+---
+
+<div class="pointer-field" id="pointer-field" aria-hidden="true"></div>
+
+<script client:idle>
+// Hydrated client:idle because the pointer field is purely decorative;
+// it must render after idle so it doesn't delay the CTA button's paint.
+// Position is computed from real pixel geometry at runtime.
+
+// --- Seeded PRNG (Mulberry32) — deterministic per build ---
+function mulberry32(s) {
+  return function () {
+    s |= 0;
+    s = (s + 0x6d2b79f5) | 0;
+    var t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function rand(lo, hi, r) {
+  return lo + r() * (hi - lo);
+}
+
+// Hardcoded config defaults — these match the Astro props in the frontmatter.
+var MOBILE_COUNT = 30;
+var TABLET_COUNT = 52;
+var DESKTOP_COUNT = 72;
+var MOBILE_BUFFER = 22;
+var TABLET_BUFFER = 32;
+var DESKTOP_BUFFER = 40;
+var MOBILE_SIZE_MIN = 14;
+var MOBILE_SIZE_MAX = 30;
+var TABLET_SIZE_MIN = 16;
+var TABLET_SIZE_MAX = 36;
+var DESKTOP_SIZE_MIN = 16;
+var DESKTOP_SIZE_MAX = 42;
+var MIN_OPACITY_MOBILE = 0.7;
+var MIN_OPACITY_TABLET = 0.65;
+var MIN_OPACITY_DESKTOP = 0.6;
+var MAX_OPACITY = 1.0;
+var JITTER = 8;
+var SEED = 99177;
+
+function buildPointerField(container, section, button, opts) {
+  var rng = mulberry32(opts.seed);
+
+  var secRect = section.getBoundingClientRect();
+  var btnRect = button.getBoundingClientRect();
+
+  // Button center in section-relative pixel coordinates
+  var cx = (btnRect.left - secRect.left) + btnRect.width / 2;
+  var cy = (btnRect.top - secRect.top) + btnRect.height / 2;
+
+  // Protected zone: CIRCLE around button center + clearance buffer.
+  // Using half-width (the longer dimension) ensures uniform clearance
+  // in all directions — no pointer gets closer to the button than the
+  // button's own radius + buffer, regardless of angle.
+  var zoneR = btnRect.width / 2 + opts.buffer;
+
+  var w = secRect.width;
+  var h = secRect.height;
+
+  // Store placed positions for inter-pointer collision detection
+  var placedPositions = [];
+
+  var placed = 0;
+  var attempts = 0;
+  var frag = document.createDocumentFragment();
+  var svgNS = 'http://www.w3.org/2000/svg';
+
+  while (placed < opts.count && attempts < opts.count * 60) {
+    attempts++;
+
+    // Uniform random position across the whole section
+    var x = rng() * w;
+    var y = rng() * h;
+
+    var dx = cx - x;
+    var dy = cy - y;
+
+    // Circular protected zone: reject if distance < zoneR
+    var distToCenter = Math.sqrt(dx * dx + dy * dy);
+    if (distToCenter < zoneR) continue;
+
+    // Inter-pointer collision detection: no pointer may be too close
+    // to an already-placed pointer. Minimum safe distance = larger
+    // pointer's radius + gap, so pointers never touch.
+    var collision = false;
+    for (var i = 0; i < placedPositions.length; i++) {
+      var pp = placedPositions[i];
+      var pdx = x - pp.x;
+      var pdy = y - pp.y;
+      var pDist = Math.sqrt(pdx * pdx + pdy * pdy);
+      // Minimum distance between centers = half of each pointer's size + gap
+      var minDist = (pp.size + 16) / 2; // 16px minimum gap between pointer edges
+      if (pDist < minDist) {
+        collision = true;
+        break;
+      }
+    }
+    if (collision) continue;
+
+    // Angle from this point TOWARD the button center (pixel-space accurate)
+    var angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
+    var jitterAngle = (rng() - 0.5) * opts.jitter;
+
+    var size = rand(opts.sizeMin, opts.sizeMax, rng);
+    var opacity = rand(opts.opacityMin, opts.opacityMax, rng);
+    var useBrightMix = rng() < 0.2;
+
+    var svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('class', 'pointer');
+    svg.setAttribute('viewBox', '0 0 100 40');
+    svg.setAttribute('width', String(Math.round(size)));
+    svg.setAttribute('height', String(Math.round(size * 0.4)));
+    svg.style.position = 'absolute';
+    svg.style.left = x + 'px';
+    svg.style.top = y + 'px';
+    svg.style.pointerEvents = 'none';
+    svg.style.setProperty('--pf-rot', (angleDeg + jitterAngle).toFixed(2) + 'deg');
+    svg.style.setProperty('--pf-opacity', opacity.toFixed(3));
+    svg.style.setProperty('--pf-color', useBrightMix
+      ? 'color-mix(in srgb, var(--color-accent) 80%, white)'
+      : 'var(--color-accent)');
+
+    var g = document.createElementNS(svgNS, 'g');
+    g.setAttribute('fill', 'none');
+    g.setAttribute('stroke', 'currentColor');
+    g.setAttribute('stroke-width', '6');
+    g.setAttribute('stroke-linecap', 'round');
+    g.setAttribute('stroke-linejoin', 'round');
+
+    var line = document.createElementNS(svgNS, 'line');
+    line.setAttribute('x1', '2');
+    line.setAttribute('y1', '20');
+    line.setAttribute('x2', '78');
+    line.setAttribute('y2', '20');
+
+    var head = document.createElementNS(svgNS, 'polyline');
+    head.setAttribute('points', '58,4 96,20 58,36');
+
+    g.appendChild(line);
+    g.appendChild(head);
+    svg.appendChild(g);
+    frag.appendChild(svg);
+
+    // Record position for collision detection
+    placedPositions.push({ x: x, y: y, size: size });
+    placed++;
+  }
+
+  container.appendChild(frag);
+}
+
+function render() {
+  var section = document.getElementById('pre-footer-cta');
+  var button = section && section.querySelector('.btn-primary');
+  var container = document.getElementById('pointer-field');
+  if (!section || !button || !container) return;
+
+  container.innerHTML = '';
+
+  var vw = window.innerWidth;
+  var opts;
+  if (vw < 768) {
+    opts = {
+      count: MOBILE_COUNT,
+      buffer: MOBILE_BUFFER,
+      sizeMin: MOBILE_SIZE_MIN,
+      sizeMax: MOBILE_SIZE_MAX,
+      opacityMin: MIN_OPACITY_MOBILE,
+      opacityMax: MAX_OPACITY,
+      jitter: JITTER,
+      seed: SEED,
+    };
+  } else if (vw < 1024) {
+    opts = {
+      count: TABLET_COUNT,
+      buffer: TABLET_BUFFER,
+      sizeMin: TABLET_SIZE_MIN,
+      sizeMax: TABLET_SIZE_MAX,
+      opacityMin: MIN_OPACITY_TABLET,
+      opacityMax: MAX_OPACITY,
+      jitter: JITTER,
+      seed: SEED,
+    };
+  } else {
+    opts = {
+      count: DESKTOP_COUNT,
+      buffer: DESKTOP_BUFFER,
+      sizeMin: DESKTOP_SIZE_MIN,
+      sizeMax: DESKTOP_SIZE_MAX,
+      opacityMin: MIN_OPACITY_DESKTOP,
+      opacityMax: MAX_OPACITY,
+      jitter: JITTER,
+      seed: SEED,
+    };
+  }
+
+  buildPointerField(container, section, button, opts);
+}
+
+render();
+
+// Debounced resize re-measure
+var resizeTimer;
+window.addEventListener('resize', function () {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(render, 120);
+});
+
+// Re-render after webfonts finish (font swap can shift button box)
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(render);
+}
+</script>
+
+<style is:global>
+.pointer-field {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.pointer-field svg.pointer {
+  position: absolute;
+  color: var(--pf-color, var(--color-accent));
+  opacity: var(--pf-opacity, 0.9);
+  transform: translate(-50%, -50%) rotate(var(--pf-rot, 0deg));
+  will-change: auto;
+}
+</style>

@@ -63,7 +63,7 @@ Base styles are mobile values; desktop is a progressive enhancement layered on t
 Rules:
 - `--color-bg` / `--color-bg-alt` alternate section-by-section (see §5, Section backgrounds) for scroll legibility. Keep the shift subtle — never introduce a third shade. (The "never introduce a third shade" rule refers to main alternating section backgrounds; `--color-bg-deep` below is a separate, explicitly scoped exception that does not count against this rule.)
 - `--color-action` (green) is reserved for CTAs/action elements only: primary button fill, CTA hover/focus, confirmation indicators. Never for nav, decoration, or general highlighting.
-- `--color-accent` (blue) covers everything else interactive: inline links, nav hover/active, non-CTA focus rings, logo pupils.
+- `--color-accent` (blue) covers everything else interactive: inline links, nav hover/active, non-CTA focus rings, logo pupils. **Decorative exception:** the Pointer Field component (§4, below) uses `--color-accent` as a decorative fill color — an extension of the token into a non-interactive decorative context. Uses `--color-accent` (~80% of instances) and `color-mix(in srgb, var(--color-accent) 80%, white)` (~20%) only. No `--color-action` green is used. This is a scoped exception, not a new color.
 - Never recolor the logo itself with `#147D40` / `#6BD98D` (binding brand rule).
 - `--color-cta-text` / `--color-cta-text-hover` are a **deliberate, scoped exception** to the closed palette above, added for the "Book Intro Call" button specifically. Not derived from brand palette, not reusable elsewhere — a different element needing a text-color override is its own decision, not a default to these two values.
 - `--color-bg-deep` (`#1F201F`) is a **deliberate, scoped exception** to the closed palette above, added exclusively for the footer's sub-footer/legal strip background. Not reusable elsewhere. The "never introduce a third shade" rule in §3 and §5 refers to the main alternating section backgrounds, not this scoped exception.
@@ -202,6 +202,20 @@ Fraunces is a display face — used for headings/titles only, never body text (h
 
 **BackToTop** — a scroll-progress ring button fixed at the bottom-right corner. Appears once `window.scrollY > 320px` with an overshoot pop animation. Uses `--color-bg` (core), `--color-text` (arrow), `--color-accent` (ring, dot, focus), `--color-border-strong` (hover core). No `--color-action` references. Mounted once in `BaseLayout.astro` before `</body>`.
 
+**Pointer Field** — decorative background layer behind the Pre-Footer CTA button. A collection of small pointer glyphs (line + open chevron head, matching `arrow.svg` shape) scattered around the CTA, each instance rotated to aim at the button's measured pixel center. `position: absolute` inside the Pre-footer CTA section, `z-index: 0`, `pointer-events: none`. Component: `PointerField.astro`.
+
+- **Asset:** `assets/icons/decorative/pointer-arrow.svg` — stroke-only line + open 3-point chevron, `viewBox="0 0 100 40"`, default orientation pointing right (east).
+- **Color:** `--color-accent` (~80% of instances) and `color-mix(in srgb, var(--color-accent) 80%, white)` (~20%). No green, no gray, no white, no gradients, no glow/box-shadow. `--color-action` stays CTA-only.
+- **Opacity:** 0.6–1.0 — clearly visible, not faint. Higher than Decorative Logo Field (which is atmospheric noise at 4–18%); this is an intentional visible graphic device.
+- **Size:** ~14–42px wide (the glyph's bounding box), tier-dependent.
+- **Orientation:** Each pointer's rotation is computed from its **real pixel position** to the button's **real measured center** (`getBoundingClientRect()` on both), so every pointer aims exactly at the CTA regardless of the section's aspect ratio. A small ±4° random jitter layer on top so the field reads as organic rather than laser-precise.
+- **Protected zone:** elliptical exclusion zone centered on the button's actual measured center, with radii equal to half the button's real rendered width/height plus a clearance buffer (22px mobile, 32px tablet, 40px desktop). No pointer inside this zone.
+- **Distribution:** uniform-random across the whole section, rejecting any point inside the protected zone.
+- **Density:** 72 desktop (≥1024px), 52 tablet (768–1023px), 30 mobile (<768px). Three tiers matching `--bp-md`/`--bp-lg` breakpoint tokens.
+- **Motion: none.** Static placement only, no animation/parallax/hover effect.
+- **Implementation:** `client:idle` Astro island — generates positions at runtime against real geometry using a seeded PRNG (Mulberry32, seed 99177) for deterministic, reviewable output. Recalculated on resize (debounced 120ms) and after webfonts load.
+- **Section `overflow: hidden`** on the host section — no page-level horizontal scroll at any breakpoint.
+
 ---
 
 ## 5. Section backgrounds
@@ -245,6 +259,7 @@ Paths relative to `assets/` in this repo (migrated wholesale from the original b
 | Favicon | `assets/icons/favicon/99ways-favicon.svg` | Built-in light/dark `prefers-color-scheme` variants — use directly. |
 | Apple touch icon | `assets/icons/apple-touch/99ways-apple-touch-icon-180.png` | 180×180, opaque Warm White field. |
 | Hero Decorative Logo Field mark | `assets/icons/micro/99ways-compact-micro-32px-dark-background-2x.png` | Used **only** by the Decorative Logo Field component. Not a functional logo lockup — never use for header/footer/nav/favicon. Single source raster, restyled per-instance via CSS; don't re-export additional sizes. |
+| Pointer Field glyph | Source: `assets/icons/decorative/pointer-arrow.svg` · Servable: `/icons/decorative/pointer-arrow.svg` (via `public/`) | Stroke-only line + open chevron head, `viewBox="0 0 100 40"`. Served via `public/icons/decorative/` → `/dist/icons/decorative/`. **Note:** the `PointerField.astro` component creates the SVG glyph programmatically via `createElementNS()` (hardcoded `<line>` + `<polyline>` elements in the client script); this file is a reference asset documenting the shape, not an imported/loaded resource.
 
 ### Available but unused in the current spec
 
@@ -388,6 +403,8 @@ Footer link: "View all posts" → `/academy/` (arrow-link component, see §4).
 Background `--color-bg-alt`. **Required section**, not present on the original WordPress site — added as a second conversion point on a content-light page. Reuses existing CTA copy only, no new text.
 
 Placement: immediately after Academy grid, immediately before footer. Full-width band, single centered column. Optional label above the button must reuse existing site copy verbatim or be omitted — never new copy. Button: "Book Intro Call" — same target/styling/color-override as the hero CTA. Section padding: `--space-8` mobile → `--space-16` desktop (compact, not an oversized "hero moment").
+
+**Pointer Field decoration:** absolutely positioned behind the CTA button (`z-index: 0`), `pointer-events: none`. Component: `PointerField.astro` (client:idle island). Protected zone, density, size, and color specs per §4. Section has `overflow: hidden` and `position: relative`.
 
 ### Footer
 Background `--color-bg`. Compact mark only (not full wordmark), min 64px.
