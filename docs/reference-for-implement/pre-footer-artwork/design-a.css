@@ -1,0 +1,132 @@
+/* ==========================================================================
+   Design A — Pre-Footer CTA "Pointer Field"
+   Tokens copied verbatim from ARCHITECTURE.md §3 (only the ones this
+   preview needs). This file does NOT introduce new tokens.
+   ========================================================================== */
+
+:root {
+  /* Base */
+  --color-bg: #292B2A;
+  --color-bg-alt: #313330;
+  --color-text: #F4F3EF;
+  --color-text-muted: #B5B8B1;
+
+  /* Accent */
+  --color-accent: #A6BAFF;
+  --color-action: #6BD98D;
+
+  /* Structural */
+  --color-border: rgba(181, 184, 177, 0.24);
+  --color-border-strong: rgba(181, 184, 177, 0.4);
+
+  /* CTA text override — scoped exception, ARCHITECTURE.md §3 */
+  --color-cta-text: #0F172A;
+  --color-cta-text-hover: #000000;
+
+  /* Type */
+  --font-primary: "Fraunces", Georgia, serif;
+  --font-body: "IBM Plex Sans", sans-serif;
+  --font-brand: "IBM Plex Mono", monospace;
+
+  --text-label: 500 0.8125rem/1.4 var(--font-brand);
+
+  /* Spacing (ARCHITECTURE.md §3) */
+  --space-4: 16px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Breakpoints (ARCHITECTURE.md §2) */
+  --bp-lg: 1024px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  font-family: var(--font-body);
+  color: var(--color-text);
+}
+
+/* Minimal chrome so the section can be judged in isolation, but still
+   shows it sitting between two --color-bg neighbors (Academy grid above,
+   Footer below) per ARCHITECTURE.md §5. */
+.context-block {
+  background: var(--color-bg);
+  padding: var(--space-16) var(--space-4);
+  text-align: center;
+  color: var(--color-text-muted);
+  font-family: var(--font-brand);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   Pre-Footer CTA section
+   ========================================================================== */
+
+.pre-footer-cta {
+  position: relative;
+  overflow: hidden; /* pointer field must never introduce page-level scroll */
+  background: var(--color-bg-alt);
+  padding: var(--space-8) var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 240px;
+}
+
+@media (min-width: 768px) {
+  .pre-footer-cta {
+    padding: var(--space-16) var(--space-12);
+    min-height: 360px;
+  }
+}
+
+/* Pointer field layer — purely decorative, sits behind the CTA */
+.pointer-field {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.pointer-field svg.pointer {
+  position: absolute;
+  color: var(--pointer-color, var(--color-accent));
+  opacity: var(--pointer-opacity, 0.9);
+  transform: translate(-50%, -50%) rotate(var(--pointer-rot, 0deg));
+  will-change: auto;
+}
+
+/* Foreground: the real CTA element, unchanged from the Hero button spec
+   (ARCHITECTURE.md §4, Button — primary). */
+.cta-wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.btn-primary {
+  display: inline-block;
+  background: var(--color-action);
+  color: var(--color-cta-text);
+  font: var(--text-label);
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 4px;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 175ms ease, color 175ms ease;
+}
+
+.btn-primary:hover,
+.btn-primary:focus-visible {
+  background: color-mix(in srgb, var(--color-action) 90%, black);
+  color: var(--color-cta-text-hover);
+  text-decoration: none;
+  outline: 2px solid var(--color-action);
+  outline-offset: 2px;
+}

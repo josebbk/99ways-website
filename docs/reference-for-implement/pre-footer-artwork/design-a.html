@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>99ways.io — Pre-Footer CTA — Design A</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,900&family=IBM+Plex+Sans:wght@400&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-a.css">
+</head>
+<body>
+
+<!-- Context block: stands in for the Academy grid so the section isn't judged in a vacuum -->
+<div class="context-block">↑ "Latest from 99Ways Academy" (--color-bg) — not part of this design</div>
+
+<!-- ============================================================
+     PRE-FOOTER CTA — Design A: "Pointer Field"
+     Real button element. Decoration is a background SVG layer only.
+     ============================================================ -->
+<section class="pre-footer-cta" id="pre-footer-cta">
+  <div class="pointer-field" id="pointer-field" aria-hidden="true"></div>
+
+  <div class="cta-wrap">
+    <a href="#" class="btn-primary" role="button" aria-disabled="true"
+       title="Booking destination not yet set — see PRODUCT.md §4">
+      Book Intro Call
+    </a>
+  </div>
+</section>
+
+<div class="context-block">↓ Footer (--color-bg) — not part of this design</div>
+
+<script>
+/*
+  Deterministic, geometry-accurate pointer-field generator.
+
+  v2 fix (per review notes): every pointer's rotation is computed from its
+  ACTUAL pixel position to the button's ACTUAL measured center — using
+  getBoundingClientRect() on the real button element, not a percentage
+  guess. This is what makes pointers aim exactly at the CTA at every
+  aspect ratio (mobile/tablet/desktop), instead of drifting off-target
+  whenever the section's width:height ratio isn't 1:1 (which it never is).
+
+  Seeded PRNG so the field is stable across reloads/resizes at a given
+  breakpoint tier — a review artifact, not a live randomized effect.
+*/
+function mulberry32(seed) {
+  return function () {
+    seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function buildPointerField(container, section, button, opts) {
+  const rand = mulberry32(opts.seed);
+
+  const secRect = section.getBoundingClientRect();
+  const btnRect = button.getBoundingClientRect();
+
+  // Button center, in pixels relative to the section (not the viewport).
+  const cx = (btnRect.left - secRect.left) + btnRect.width / 2;
+  const cy = (btnRect.top - secRect.top) + btnRect.height / 2;
+
+  // Protected zone: an ellipse around the button's REAL rendered box plus
+  // a clearance buffer. Recalculated every call against actual measured
+  // size — same pattern as the Decorative Logo Field's protected zone
+  // (ARCHITECTURE.md §4: "recalculated per breakpoint against actual
+  // rendered content size, never hardcoded coordinates").
+  const zoneRx = btnRect.width / 2 + opts.buffer;
+  const zoneRy = btnRect.height / 2 + opts.buffer;
+
+  const w = secRect.width;
+  const h = secRect.height;
+
+  let placed = 0;
+  let attempts = 0;
+  const frag = document.createDocumentFragment();
+
+  while (placed < opts.count && attempts < opts.count * 40) {
+    attempts++;
+    // Uniform placement across the whole section — this, not an
+    // outward-biased ring, is what keeps pointers dense and close
+    // together rather than "few and far between."
+    const x = rand() * w;
+    const y = rand() * h;
+
+    const dx = cx - x;
+    const dy = cy - y;
+
+    // Reject anything inside the protected zone around the CTA.
+    const nx = dx / zoneRx;
+    const ny = dy / zoneRy;
+    if (nx * nx + ny * ny < 1) continue;
+
+    // angle FROM this point TOWARD the real button center, in pixel
+    // space — this is the fix. Default glyph points along +x (east);
+    // rotating by atan2(dy, dx) aims its tip exactly at (cx, cy).
+    const angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
+    const jitter = (rand() - 0.5) * opts.jitter; // small organic wobble only
+
+    const size = opts.minSize + rand() * (opts.maxSize - opts.minSize);
+    const opacity = opts.minOpacity + rand() * (opts.maxOpacity - opts.minOpacity);
+    // Bluish field per the design tokens: --color-accent, with a small
+    // brighter variant (accent mixed toward white) for a little depth —
+    // no muted gray, no white-only instances, no green.
+    const color = rand() < 0.8
+      ? "var(--color-accent)"
+      : "color-mix(in srgb, var(--color-accent) 80%, white)";
+
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("class", "pointer");
+    svg.setAttribute("viewBox", "0 0 100 40");
+    svg.setAttribute("width", size);
+    svg.setAttribute("height", size * 0.4);
+    svg.style.left = x + "px";
+    svg.style.top = y + "px";
+    svg.style.setProperty("--pointer-rot", (angleDeg + jitter) + "deg");
+    svg.style.setProperty("--pointer-opacity", opacity.toFixed(3));
+    svg.style.setProperty("--pointer-color", color);
+
+    const g = document.createElementNS(svgNS, "g");
+    g.setAttribute("fill", "none");
+    g.setAttribute("stroke", "currentColor");
+    g.setAttribute("stroke-width", "8");
+    g.setAttribute("stroke-linecap", "round");
+    g.setAttribute("stroke-linejoin", "round");
+
+    const line = document.createElementNS(svgNS, "line");
+    line.setAttribute("x1", "2"); line.setAttribute("y1", "20");
+    line.setAttribute("x2", "78"); line.setAttribute("y2", "20");
+
+    const head = document.createElementNS(svgNS, "polyline");
+    head.setAttribute("points", "58,4 96,20 58,36");
+
+    g.appendChild(line);
+    g.appendChild(head);
+    svg.appendChild(g);
+    frag.appendChild(svg);
+    placed++;
+  }
+
+  container.appendChild(frag);
+}
+
+function render() {
+  const section = document.getElementById("pre-footer-cta");
+  const button = section.querySelector(".btn-primary");
+  const container = document.getElementById("pointer-field");
+  container.innerHTML = "";
+
+  const vw = window.innerWidth;
+  // Breakpoint tiers per ARCHITECTURE.md §2 (--bp-md: 768, --bp-lg: 1024).
+  // Only density/buffer/size change by tier — the pointing math above is
+  // identical (and identically correct) at every width.
+  let opts;
+  if (vw < 768) {
+    opts = { seed: 99177, count: 30, buffer: 22, minSize: 14, maxSize: 30, minOpacity: 0.7, maxOpacity: 1.0, jitter: 8 };
+  } else if (vw < 1024) {
+    opts = { seed: 99177, count: 52, buffer: 32, minSize: 16, maxSize: 36, minOpacity: 0.65, maxOpacity: 1.0, jitter: 8 };
+  } else {
+    opts = { seed: 99177, count: 72, buffer: 40, minSize: 16, maxSize: 42, minOpacity: 0.6, maxOpacity: 1.0, jitter: 8 };
+  }
+
+  buildPointerField(container, section, button, opts);
+}
+
+render();
+// Re-measure on resize AND once more after webfont load — the button's
+// box (and therefore its true center) can shift slightly once IBM Plex
+// Mono finishes loading, which would otherwise leave pointers aimed at a
+// slightly stale center.
+let resizeTimer;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(render, 120);
+});
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(render);
+}
+</script>
+</body>
+</html>
